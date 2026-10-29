@@ -46,7 +46,7 @@ Minimal child theme, two files in a folder such as `blt-child/`:
 ```css
 /*
 Theme Name: BLT Child
-Template: beaver-light-theme-demo
+Template: beaver-light-theme
 */
 ```
 
