@@ -1,0 +1,62 @@
+/**
+ * Beaver Light Theme: block editor styles.
+ *
+ * Mirrors the .blt-prose rules in theme.css so a post looks the same while
+ * it is written. The --blt-* properties are printed into the editor too
+ * (BLT_Styles::editor_settings), so Global Styles and design system values
+ * reach the editor without a second set of colors here.
+ *
+ * Unlayered on purpose: no builder or Additional CSS competes in the editor,
+ * and core's editor styles would otherwise beat layered rules.
+ */
+
+body {
+	background: var(--blt-surface);
+	color: var(--blt-text);
+	font-family: var(--blt-font-body);
+	font-size: var(--blt-font-size);
+	line-height: 1.65;
+	-webkit-font-smoothing: antialiased;
+}
+
+:is(h1, h2, h3, h4, h5, h6) {
+	color: var(--blt-heading);
+	font-family: var(--blt-font-heading);
+	font-weight: var(--blt-heading-weight);
+	letter-spacing: -0.01em;
+	line-height: 1.2;
+}
+
+h1 { font-size: clamp(2rem, 1.4rem + 2.4vw, 3rem); }
+h2 { font-size: clamp(1.5rem, 1.2rem + 1.2vw, 2rem); }
+h3 { font-size: 1.375rem; }
+h4 { font-size: 1.125rem; }
+
+a {
+	color: var(--blt-link);
+	text-decoration-thickness: 1px;
+	text-underline-offset: 0.18em;
+}
+
+a:hover { color: var(--blt-link-hover); }
+
+blockquote {
+	border-left: 3px solid var(--blt-primary);
+	margin-inline: 0;
+	padding-left: 1.25em;
+}
+
+:is(code, pre) {
+	background: color-mix(in srgb, var(--blt-line) 45%, transparent);
+	border-radius: var(--blt-radius);
+	font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+	font-size: 0.9em;
+}
+
+code { padding: 0.1em 0.35em; }
+pre { overflow-x: auto; padding: 1em 1.25em; }
+pre code { background: none; padding: 0; }
+hr { border: 0; border-top: 1px solid var(--blt-line); }
+table { border-collapse: collapse; width: 100%; }
+:is(th, td) { border-bottom: 1px solid var(--blt-line); padding: 0.6em 0.8em; text-align: start; }
+img { border-radius: var(--blt-radius); }

@@ -1,0 +1,18 @@
+/*
+Theme Name: Beaver Light Theme
+Theme URI: https://www.wpbeaverbuilder.com/
+Description: A lightweight theme built for Beaver Builder. It looks finished out of the box, then steps aside the moment you set Global Styles or a design system, so nothing needs undoing. Themer-ready, no settings panels, no frameworks, no jQuery, no build step.
+Author: The Beaver Builder Team
+Author URI: https://www.wpbeaverbuilder.com/
+Version: 0.1.0-demo
+Requires at least: 6.6
+Tested up to: 6.9
+Requires PHP: 7.4
+License: GNU General Public License v2 or later
+License URI: https://www.gnu.org/licenses/gpl-2.0.html
+Text Domain: beaver-light-theme
+Tags: blog, one-column, custom-logo, custom-menu, editor-style, featured-images, threaded-comments, translation-ready, wide-blocks, full-width-template
+
+Pre-release. The name and the blt_ prefix are placeholders until they are
+locked. Styles are enqueued from assets/css; this file is the theme header only.
+*/

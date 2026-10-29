@@ -1,0 +1,106 @@
+/**
+ * Beaver Light Theme: the native header and footer.
+ *
+ * Shares theme.css's layer stack, so a Themer header/footer or any unlayered
+ * CSS replaces or overrides this without a fight.
+ */
+
+@layer blt-components {
+	.blt-header { border-bottom: 1px solid var(--blt-line); }
+
+	.blt-header__inner {
+		align-items: center;
+		display: flex;
+		flex-wrap: wrap;
+		gap: 1rem 2rem;
+		justify-content: space-between;
+		min-height: 4.5rem;
+		padding-block: 0.75rem;
+	}
+
+	.blt-site-title { font-family: var(--blt-font-heading); font-size: 1.375rem; font-weight: var(--blt-heading-weight); line-height: 1.2; margin: 0; }
+	.blt-site-title a { color: var(--blt-heading); text-decoration: none; }
+	.blt-branding .custom-logo { display: block; height: auto; max-height: 3.5rem; width: auto; }
+
+	.blt-menu, .blt-menu .sub-menu, .blt-footer-menu { list-style: none; margin: 0; padding: 0; }
+	.blt-menu a, .blt-footer-menu a { color: var(--blt-text); text-decoration: none; }
+	.blt-menu a:hover, .blt-footer-menu a:hover,
+	.blt-menu .current-menu-item > a { color: var(--blt-link); text-decoration: underline; text-underline-offset: 0.25em; }
+
+	.blt-nav-toggle {
+		background: none;
+		border: 1px solid var(--blt-line);
+		border-radius: var(--blt-radius);
+		color: var(--blt-text);
+		cursor: pointer;
+		display: none;
+		height: 2.75rem;
+		padding: 0;
+		width: 2.75rem;
+	}
+
+	.blt-nav-toggle__bars,
+	.blt-nav-toggle__bars::before,
+	.blt-nav-toggle__bars::after {
+		background: currentColor;
+		display: block;
+		height: 2px;
+		margin-inline: auto;
+		position: relative;
+		transition: transform 160ms ease;
+		width: 1.25rem;
+	}
+
+	.blt-nav-toggle__bars::before, .blt-nav-toggle__bars::after { content: ""; position: absolute; }
+	.blt-nav-toggle__bars::before { top: -6px; }
+	.blt-nav-toggle__bars::after { top: 6px; }
+	.blt-nav-toggle[aria-expanded="true"] .blt-nav-toggle__bars { background: transparent; }
+	.blt-nav-toggle[aria-expanded="true"] .blt-nav-toggle__bars::before { transform: translateY(6px) rotate(45deg); }
+	.blt-nav-toggle[aria-expanded="true"] .blt-nav-toggle__bars::after { transform: translateY(-6px) rotate(-45deg); }
+
+	@media (min-width: 768px) {
+		.blt-menu { display: flex; flex-wrap: wrap; gap: 0.25rem 1.75rem; }
+		.blt-menu > li { position: relative; }
+		.blt-menu a { display: block; padding-block: 0.5rem; }
+
+		.blt-menu .sub-menu {
+			background: var(--blt-surface);
+			border: 1px solid var(--blt-line);
+			border-radius: var(--blt-radius);
+			left: -1rem;
+			min-width: 12rem;
+			opacity: 0;
+			padding: 0.5rem 1rem;
+			position: absolute;
+			top: 100%;
+			transition: opacity 160ms ease, visibility 160ms ease;
+			visibility: hidden;
+			z-index: 50;
+		}
+
+		.blt-menu li:is(:hover, :focus-within) > .sub-menu { opacity: 1; visibility: visible; }
+	}
+
+	@media (max-width: 767px) {
+		.blt-nav-toggle { display: block; }
+		.blt-nav { display: none; flex-basis: 100%; }
+		.blt-nav.is-open { display: block; }
+		.blt-menu a { border-top: 1px solid var(--blt-line); display: block; padding-block: 0.75rem; }
+		.blt-menu .sub-menu a { padding-left: 1rem; }
+	}
+
+	.blt-footer { border-top: 1px solid var(--blt-line); color: var(--blt-muted); font-size: 0.875rem; }
+
+	.blt-footer__inner {
+		align-items: center;
+		display: flex;
+		flex-wrap: wrap;
+		gap: 0.75rem 2rem;
+		justify-content: space-between;
+		padding-block: 1.75rem;
+	}
+
+	.blt-copyright { margin: 0; }
+	.blt-footer-menu { display: flex; flex-wrap: wrap; gap: 0.5rem 1.5rem; }
+	.blt-footer-menu a { color: var(--blt-muted); }
+}
