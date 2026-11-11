@@ -30,3 +30,15 @@ These are frozen once the first beta ships. Adding is fine; renaming or removing
 - Files stay under 300 lines and functions under 30.
 - Escape output late, sanitize input at the boundary.
 - Every PHP method gets a docblock: one sentence, `@since`, `@param` and `@return`.
+
+## Checks
+
+Pull requests run three checks: `Lint` (PHP lint on 7.4 to 8.4, then PHPCS with WordPress-Extra and PHPCompatibilityWP at PHP 7.4 and WordPress 6.6), `Test` (PHPUnit on WordPress 6.6 and the latest release) and `Theme Check` (the built zip, then the Theme Check plugin and a version-consistency check). To run them locally:
+
+- `composer install`, then `composer lint` for PHPCS.
+- `composer test` for PHPUnit. It needs a local MySQL and a throwaway database, since the suite drops its tables. Set `WP_CORE_DIR` to a WordPress download that matches the installed `wp-phpunit/wp-phpunit` version, and `WP_TESTS_DB_NAME`, `WP_TESTS_DB_USER`, `WP_TESTS_DB_PASSWORD` and `WP_TESTS_DB_HOST` if the defaults in `tests/wp-tests-config.php` do not fit.
+- `.github/scripts/build-zip.sh` builds the release zip from `HEAD` into `build/` and checks what it contains. Uncommitted changes are not in it. `php .github/scripts/check-metadata.php <theme folder>` checks the versions and requirements agree.
+
+The tooling, tests and workflows are development files: the zip leaves them out (see `.gitattributes`), and `AGENTS.md` ships.
+
+A release is a tag named `v` plus the `Version` in `style.css`. Pushing it builds the zip and attaches it to a GitHub release.

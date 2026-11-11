@@ -1,0 +1,179 @@
+name: CI
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: ${{ github.event_name == 'pull_request' }}
+
+jobs:
+  php-lint:
+    name: PHP lint ${{ matrix.php }}
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        php: ['7.4', '8.0', '8.1', '8.2', '8.3', '8.4']
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - uses: shivammathur/setup-php@eb7c497e18156a6bbabfef1d3a82760b9eda3962 # 2.40.0
+        with:
+          php-version: ${{ matrix.php }}
+          coverage: none
+      - name: Lint every tracked PHP file
+        run: git ls-files -z '*.php' | xargs -0 -n1 php -l
+
+  # The check named Lint. PHPCS runs here so it adds no check name of its own,
+  # and the last step fails unless every PHP lint leg passed. always() matters:
+  # a skipped job would satisfy a required check.
+  lint:
+    name: Lint
+    needs: php-lint
+    if: always()
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - uses: shivammathur/setup-php@eb7c497e18156a6bbabfef1d3a82760b9eda3962 # 2.40.0
+        with:
+          php-version: '8.3'
+          coverage: none
+          tools: composer
+      - run: composer install --no-interaction --prefer-dist
+      - name: PHPCS
+        run: composer lint
+      - name: Require every PHP lint leg to pass
+        if: always()
+        env:
+          PHP_LINT_RESULT: ${{ needs.php-lint.result }}
+        run: test "$PHP_LINT_RESULT" = success
+
+  phpunit:
+    name: PHPUnit WP ${{ matrix.wp }}
+    runs-on: ubuntu-latest
+    env:
+      WP_TESTS_DB_NAME: wordpress_test
+      WP_TESTS_DB_USER: root
+      WP_TESTS_DB_PASSWORD: root
+      WP_TESTS_DB_HOST: 127.0.0.1
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - wp: '6.6'
+            php: '7.4'
+          - wp: latest
+            php: '8.3'
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - uses: shivammathur/setup-php@eb7c497e18156a6bbabfef1d3a82760b9eda3962 # 2.40.0
+        with:
+          php-version: ${{ matrix.php }}
+          ini-values: memory_limit=-1
+          coverage: none
+          tools: composer
+      - name: Start MySQL
+        run: |
+          sudo systemctl start mysql
+          mysql -uroot -proot -e 'CREATE DATABASE wordpress_test'
+      - run: composer install --no-interaction --prefer-dist
+      # Core follows wp-phpunit: pin the test library for the leg, then
+      # download the exact core version it resolved to.
+      - name: Pin the WordPress test library
+        env:
+          WP_LEG: ${{ matrix.wp }}
+        run: |
+          if [ "$WP_LEG" = latest ]; then
+            composer update wp-phpunit/wp-phpunit --no-interaction
+          else
+            composer update wp-phpunit/wp-phpunit --with "wp-phpunit/wp-phpunit:${WP_LEG}.*" --no-interaction
+          fi
+          version="$(composer show --locked --format=json wp-phpunit/wp-phpunit | jq -r '.versions[0]')"
+          echo "WP_VERSION=${version}" >> "$GITHUB_ENV"
+      - run: .github/scripts/setup-wp-cli.sh
+      - name: Download WordPress
+        run: wp core download --version="$WP_VERSION" --path="$RUNNER_TEMP/wordpress"
+      - name: PHPUnit
+        run: |
+          export WP_CORE_DIR="$RUNNER_TEMP/wordpress"
+          composer test
+
+  # The check named Test.
+  test:
+    name: Test
+    needs: phpunit
+    if: always()
+    runs-on: ubuntu-latest
+    steps:
+      - name: Require every PHPUnit leg to pass
+        env:
+          PHPUNIT_RESULT: ${{ needs.phpunit.result }}
+        run: test "$PHPUNIT_RESULT" = success
+
+  theme-check:
+    name: Theme Check
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - uses: shivammathur/setup-php@eb7c497e18156a6bbabfef1d3a82760b9eda3962 # 2.40.0
+        with:
+          php-version: '8.3'
+          ini-values: memory_limit=-1
+          coverage: none
+      - name: Build the zip and check its contents
+        id: build
+        run: |
+          zip="$(.github/scripts/build-zip.sh)"
+          echo "zip=${zip}" >> "$GITHUB_OUTPUT"
+          echo "slug=$(basename "$zip" .zip)" >> "$GITHUB_OUTPUT"
+      - uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
+        with:
+          name: ${{ steps.build.outputs.slug }}
+          path: ${{ steps.build.outputs.zip }}
+          retention-days: 7
+          if-no-files-found: error
+      - name: Check metadata on the built zip
+        if: ${{ !cancelled() && steps.build.outcome == 'success' }}
+        env:
+          ZIP: ${{ steps.build.outputs.zip }}
+          SLUG: ${{ steps.build.outputs.slug }}
+        run: |
+          unzip -q "$ZIP" -d build/extract
+          php .github/scripts/check-metadata.php "build/extract/${SLUG}"
+      - name: Start MySQL and install WP-CLI
+        if: ${{ !cancelled() && steps.build.outcome == 'success' }}
+        run: |
+          sudo systemctl start mysql
+          mysql -uroot -proot -e 'CREATE DATABASE wordpress'
+          .github/scripts/setup-wp-cli.sh
+      - name: Install WordPress with Theme Check and the zip
+        if: ${{ !cancelled() && steps.build.outcome == 'success' }}
+        env:
+          ZIP: ${{ steps.build.outputs.zip }}
+        run: |
+          wp_path="$RUNNER_TEMP/wordpress"
+          echo "WP_PATH=${wp_path}" >> "$GITHUB_ENV"
+          wp core download --path="$wp_path"
+          wp config create --path="$wp_path" --dbname=wordpress --dbuser=root --dbpass=root --dbhost=127.0.0.1
+          wp core install --path="$wp_path" --url=http://localhost --title=CI --admin_user=admin --admin_password=ci-only-password --admin_email=ci@example.org --skip-email
+          wp plugin install theme-check --activate --path="$wp_path"
+          wp theme install "$ZIP" --path="$wp_path"
+      - name: Run Theme Check
+        if: ${{ !cancelled() && steps.build.outcome == 'success' }}
+        env:
+          SLUG: ${{ steps.build.outputs.slug }}
+        run: wp theme-check run "$SLUG" --path="$WP_PATH"

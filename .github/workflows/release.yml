@@ -1,0 +1,48 @@
+name: Release
+
+on:
+  push:
+    tags: ['v*']
+
+permissions: {}
+
+jobs:
+  release:
+    name: Release
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - uses: shivammathur/setup-php@eb7c497e18156a6bbabfef1d3a82760b9eda3962 # 2.40.0
+        with:
+          php-version: '8.3'
+          coverage: none
+      - name: Build the zip and check its contents
+        id: build
+        run: |
+          zip="$(.github/scripts/build-zip.sh)"
+          echo "zip=${zip}" >> "$GITHUB_OUTPUT"
+          echo "slug=$(basename "$zip" .zip)" >> "$GITHUB_OUTPUT"
+      - name: Check the tag against the built zip's metadata
+        env:
+          ZIP: ${{ steps.build.outputs.zip }}
+          SLUG: ${{ steps.build.outputs.slug }}
+          TAG: ${{ github.ref_name }}
+        run: |
+          unzip -q "$ZIP" -d build/extract
+          php .github/scripts/check-metadata.php "build/extract/${SLUG}" --tag="$TAG"
+      - name: Create the GitHub release
+        env:
+          GH_TOKEN: ${{ github.token }}
+          ZIP: ${{ steps.build.outputs.zip }}
+          TAG: ${{ github.ref_name }}
+        run: |
+          flags=()
+          # A hyphen in the version (0.1.0-demo, 1.0.0-rc.1) marks a pre-release.
+          if [[ "$TAG" == *-* ]]; then
+            flags+=(--prerelease)
+          fi
+          gh release create "$TAG" "$ZIP" --verify-tag --generate-notes --title "$TAG" "${flags[@]}"

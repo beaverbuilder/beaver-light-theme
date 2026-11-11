@@ -1,0 +1,19 @@
+name: Feature request
+description: Suggest a change to the theme.
+labels: [enhancement]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        The theme stays deliberately small: no settings panels and no plugin territory. See CONTRIBUTING.md for what belongs in it.
+  - type: textarea
+    id: problem
+    attributes:
+      label: The problem
+      description: What are you trying to do that the theme makes hard?
+    validations:
+      required: true
+  - type: textarea
+    id: idea
+    attributes:
+      label: What you would like
