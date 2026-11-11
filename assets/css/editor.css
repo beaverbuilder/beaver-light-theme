@@ -60,3 +60,10 @@ hr { border: 0; border-top: 1px solid var(--blt-line); }
 table { border-collapse: collapse; width: 100%; }
 :is(th, td) { border-bottom: 1px solid var(--blt-line); padding: 0.6em 0.8em; text-align: start; }
 img { border-radius: var(--blt-radius); }
+
+/* Classic block floats and captions; :where() keeps core's own block alignment rules ahead, as the layers do on the front end. */
+:where(.alignleft) { float: left; margin: 0.3em 1.5em 1em 0; }
+:where(.alignright) { float: right; margin: 0.3em 0 1em 1.5em; }
+:where(.wp-caption) { max-width: 100%; }
+:where(.wp-caption) img { display: block; }
+:where(.wp-caption-text, .gallery-caption) { color: var(--blt-muted); font-size: 0.875rem; margin-top: 0.5em; }
