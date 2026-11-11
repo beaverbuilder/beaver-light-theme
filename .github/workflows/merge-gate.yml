@@ -1,0 +1,65 @@
+name: Merge Gate
+
+# The lane rules, through the bridge.
+#
+# A stub for a public repo: nothing here runs a lane. It applies the lanes'
+# cheap event guards and starts one entry workflow in the private
+# beaverbuilder/beaver-builder-dev-workspace, sending only the repo, the lane,
+# numbers, the event's action and sender, and a comment id. It never checks out
+# code, never uses an action, and passes no free text. LANE_DISPATCH_TOKEN is a
+# secret of the `lane-bridge` environment, which only the default branch may
+# use; changing this file needs another maintainer's approval. The job is keyed
+# `bridge`, never the name of a required check.
+#
+# The gate publishes the `merge-gate` status and the `merge:` label from the
+# private side. A review reaches it on the PR's next event or within the hour.
+
+on:
+  pull_request_target:
+    types: [opened, reopened, synchronize, labeled, unlabeled, edited, ready_for_review]
+  issue_comment:
+    types: [created, edited]
+
+permissions: {}
+
+jobs:
+  bridge:
+    # The prefilters, then the gate's own guard, verbatim: a comment on a PR
+    # only.
+    if: >-
+      (github.event_name != 'pull_request_target'
+        || github.event.pull_request.head.repo.full_name == github.repository)
+      && (github.event_name != 'issue_comment'
+        || contains(fromJSON('["OWNER","MEMBER","COLLABORATOR"]'), github.event.comment.author_association))
+      && (
+        github.event_name != 'issue_comment' || github.event.issue.pull_request != null
+      )
+    runs-on: ubuntu-latest
+    environment: lane-bridge
+    timeout-minutes: 5
+    permissions: {}
+    steps:
+      # Every value reaches the shell through env. Only the token's expiry
+      # line is printed; a non-2xx answer fails the step.
+      - name: Dispatch
+        env:
+          GH_TOKEN: ${{ secrets.LANE_DISPATCH_TOKEN }}
+          ENTRY: bridge-gate.yml
+          REPO: ${{ github.repository }}
+          LANE: gate
+          PR: ${{ github.event.pull_request.number || github.event.issue.number }}
+          ISSUE: ''
+          STAGE: ''
+          ACTION: ${{ github.event.action || 'dispatch' }}
+          SENDER: ${{ github.event.sender.login }}
+          COMMENT: ${{ github.event.comment.id }}
+          FLAGS: ''
+        run: |
+          WORKFLOW="repos/beaverbuilder/beaver-builder-dev-workspace/actions/workflows/$ENTRY"
+          gh api -i --method POST "$WORKFLOW/dispatches" -f ref=main \
+            -f "inputs[repo]=$REPO" -f "inputs[lane]=$LANE" -f "inputs[pr]=$PR" -f "inputs[issue]=$ISSUE" \
+            -f "inputs[stage]=$STAGE" -f "inputs[action]=$ACTION" -f "inputs[sender]=$SENDER" \
+            -f "inputs[comment]=$COMMENT" -f "inputs[flags]=$FLAGS" > "$RUNNER_TEMP/dispatch.txt"
+          EXPIRES="$(tr -d '\r' < "$RUNNER_TEMP/dispatch.txt" \
+            | grep -i '^github-authentication-token-expiration:' | head -1 | cut -d' ' -f2- || true)"
+          echo "bridge-token-expires: ${EXPIRES:-none}"
