@@ -1,0 +1,79 @@
+name: PR Test
+
+# The executor, through the bridge.
+#
+# A stub for a public repo: nothing here runs a lane. It applies the lanes'
+# cheap event guards and starts one entry workflow in the private
+# beaverbuilder/beaver-builder-dev-workspace, sending only the repo, the lane,
+# numbers, the event's action and sender, and a comment id. It never checks out
+# code, never uses an action, and passes no free text. LANE_DISPATCH_TOKEN is a
+# secret of the `lane-bridge` environment, which only the default branch may
+# use; changing this file needs another maintainer's approval. The job is keyed
+# `bridge`, never the name of a required check.
+
+on:
+  pull_request_target:
+    types: [labeled]
+  issue_comment:
+    types: [created, edited]
+
+permissions: {}
+
+jobs:
+  bridge:
+    # The fork and comment-author prefilters, then the executor's own guard,
+    # verbatim.
+    if: >-
+      (github.event_name != 'pull_request_target'
+        || github.event.pull_request.head.repo.full_name == github.repository)
+      && (github.event_name != 'issue_comment'
+        || contains(fromJSON('["OWNER","MEMBER","COLLABORATOR"]'), github.event.comment.author_association))
+      && (
+        ((github.event_name == 'pull_request' || github.event_name == 'pull_request_target')
+          && github.event.pull_request.state == 'open'
+          && github.event.pull_request.draft == false
+          && contains(github.event.pull_request.assignees.*.login, 'beaverbuilderbot')
+          && ((github.event.action == 'labeled'
+                && (github.event.label.name == 'merge: needs testing'
+                    || github.event.label.name == 'merge: retest'))
+              || (github.event.action == 'synchronize'
+                  && (contains(github.event.pull_request.labels.*.name, 'merge: needs testing')
+                      || contains(github.event.pull_request.labels.*.name, 'merge: needs review')
+                      || contains(github.event.pull_request.labels.*.name, 'merge: needs visuals')
+                      || contains(github.event.pull_request.labels.*.name, 'merge: ready')))))
+        || (github.event_name == 'issue_comment'
+          && github.event.issue.pull_request != null
+          && github.event.issue.state == 'open'
+          && contains(github.event.comment.body, 'bb-merge-check')
+          && contains(github.event.comment.body, 'state:ready')
+          && contains(github.event.issue.assignees.*.login, 'beaverbuilderbot'))
+      )
+    runs-on: ubuntu-latest
+    environment: lane-bridge
+    timeout-minutes: 5
+    permissions: {}
+    steps:
+      # Every value reaches the shell through env. Only the token's expiry
+      # line is printed; a non-2xx answer fails the step.
+      - name: Dispatch
+        env:
+          GH_TOKEN: ${{ secrets.LANE_DISPATCH_TOKEN }}
+          ENTRY: bridge-test.yml
+          REPO: ${{ github.repository }}
+          LANE: test
+          PR: ${{ github.event.pull_request.number || github.event.issue.number }}
+          ISSUE: ''
+          STAGE: ''
+          ACTION: ${{ github.event.action || 'dispatch' }}
+          SENDER: ${{ github.event.sender.login }}
+          COMMENT: ${{ github.event.comment.id }}
+          FLAGS: ''
+        run: |
+          WORKFLOW="repos/beaverbuilder/beaver-builder-dev-workspace/actions/workflows/$ENTRY"
+          gh api -i --method POST "$WORKFLOW/dispatches" -f ref=main \
+            -f "inputs[repo]=$REPO" -f "inputs[lane]=$LANE" -f "inputs[pr]=$PR" -f "inputs[issue]=$ISSUE" \
+            -f "inputs[stage]=$STAGE" -f "inputs[action]=$ACTION" -f "inputs[sender]=$SENDER" \
+            -f "inputs[comment]=$COMMENT" -f "inputs[flags]=$FLAGS" > "$RUNNER_TEMP/dispatch.txt"
+          EXPIRES="$(tr -d '\r' < "$RUNNER_TEMP/dispatch.txt" \
+            | grep -i '^github-authentication-token-expiration:' | head -1 | cut -d' ' -f2- || true)"
+          echo "bridge-token-expires: ${EXPIRES:-none}"
