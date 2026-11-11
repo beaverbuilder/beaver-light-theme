@@ -1,0 +1,26 @@
+name: Bug report
+description: Something in the theme does not work as expected.
+labels: [bug]
+body:
+  - type: textarea
+    id: what-happened
+    attributes:
+      label: What happened
+      description: What you saw, and what you expected to see instead.
+    validations:
+      required: true
+  - type: textarea
+    id: steps
+    attributes:
+      label: Steps to reproduce
+      placeholder: |
+        1. Go to ...
+        2. Click ...
+    validations:
+      required: true
+  - type: input
+    id: versions
+    attributes:
+      label: Versions
+      description: Theme, WordPress, PHP and Beaver Builder versions, if relevant.
+      placeholder: "Theme 0.1.0-demo, WordPress 6.9, PHP 8.3"

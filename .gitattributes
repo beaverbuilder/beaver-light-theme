@@ -1,0 +1,14 @@
+# Paths `git archive` leaves out of the release zip. This is the one list of
+# what stays out; .github/scripts/build-zip.sh builds from it and checks it.
+/.github export-ignore
+/.claude export-ignore
+/agents export-ignore
+/tests export-ignore
+/CONTRIBUTING.md export-ignore
+/CLAUDE.md export-ignore
+/.gitattributes export-ignore
+/.gitignore export-ignore
+/composer.json export-ignore
+/composer.lock export-ignore
+/phpcs.xml.dist export-ignore
+/phpunit.xml.dist export-ignore
