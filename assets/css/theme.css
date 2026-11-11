@@ -118,11 +118,11 @@
 	.blt-prose .alignfull { margin-inline: calc(50% - 50vw); max-width: 100vw; }
 	.blt-prose .aligncenter { margin-inline: auto; }
 
-	/* Classic editor floats and the caption and gallery shortcodes; the clearfix keeps a tall float inside the content. */
+	/* Classic editor floats and captions: half the column at most so narrow screens keep room for text, and the clearfix contains them. */
 	.blt-prose::after { clear: both; content: ""; display: table; }
-	.blt-prose .alignleft { float: left; margin: 0.3em 1.5em 1em 0; }
-	.blt-prose .alignright { float: right; margin: 0.3em 0 1em 1.5em; }
 	.blt-prose .wp-caption { max-width: 100%; }
+	.blt-prose .alignleft { float: left; margin: 0.3em 1.5em 1em 0; max-width: 50%; }
+	.blt-prose .alignright { float: right; margin: 0.3em 0 1em 1.5em; max-width: 50%; }
 	.blt-prose .wp-caption img { display: block; }
 	.blt-prose :is(.wp-caption-text, .gallery-caption) { color: var(--blt-muted); font-size: 0.875rem; margin-top: 0.5em; }
 }
