@@ -97,3 +97,4 @@ jobs:
           EXPIRES="$(tr -d '\r' < "$RUNNER_TEMP/dispatch.txt" \
             | grep -i '^github-authentication-token-expiration:' | head -1 | cut -d' ' -f2- || true)"
           echo "bridge-token-expires: ${EXPIRES:-none}"
+# Proof: a change to this file needs another maintainer to approve it.
