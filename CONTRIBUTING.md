@@ -37,7 +37,7 @@ Pull requests run three checks: `Lint` (PHP lint on 7.4 to 8.4, then PHPCS with 
 
 - `composer install`, then `composer lint` for PHPCS.
 - `composer test` for PHPUnit. It needs a local MySQL and a throwaway database, since the suite drops its tables. Set `WP_CORE_DIR` to a WordPress download that matches the installed `wp-phpunit/wp-phpunit` version, and `WP_TESTS_DB_NAME`, `WP_TESTS_DB_USER`, `WP_TESTS_DB_PASSWORD` and `WP_TESTS_DB_HOST` if the defaults in `tests/wp-tests-config.php` do not fit.
-- `.github/scripts/build-zip.sh` builds the release zip from `HEAD` into `build/` and checks what it contains. Uncommitted changes are not in it. `php .github/scripts/check-metadata.php <theme folder>` checks the versions and requirements agree.
+- `.github/scripts/build-zip.sh` builds the release zip from `HEAD` into `build/` and checks what it contains. Uncommitted changes are not in it. To check the versions and requirements agree, unzip it into an empty directory and run the check on the extracted `beaver-light/` folder, not on your checkout, whose folder name does not match the text domain: `rm -rf build/extract && unzip -q build/beaver-light.zip -d build/extract && php .github/scripts/check-metadata.php build/extract/beaver-light`.
 
 Theme Check prints recommendations that do not fail the check. These stay unfixed on purpose: widget areas (the layout is one column, and the header and footer come from menus or Beaver Themer), `custom-header` and `custom-background` (no settings), `register_block_style` and `wp-block-styles` (one plain look, and core's block theme styles load unlayered), and `register_block_pattern` (styling and layout come from Beaver Builder). Fix any other recommendation it prints.
 
