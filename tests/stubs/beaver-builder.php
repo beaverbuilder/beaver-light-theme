@@ -21,12 +21,29 @@ class FLBuilderModel {
 	public static $global_settings;
 
 	/**
+	 * What is_builder_enabled() returns.
+	 *
+	 * @var bool
+	 */
+	public static $builder_enabled = false;
+
+	/**
 	 * The builder's global settings.
 	 *
 	 * @return object
 	 */
 	public static function get_global_settings() {
 		return self::$global_settings;
+	}
+
+	/**
+	 * Whether the builder lays out the current post.
+	 *
+	 * @param int|null $post_id Ignored.
+	 * @return bool
+	 */
+	public static function is_builder_enabled( $post_id = null ) {
+		return self::$builder_enabled;
 	}
 }
 
