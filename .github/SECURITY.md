@@ -2,7 +2,7 @@
 
 ## Supported versions
 
-Beaver Light is pre-release. Only the latest `0.x` release and the `main` branch receive security fixes.
+The Beaver Light theme is pre-release. Only the latest `0.x` release and the `main` branch receive security fixes.
 
 ## Reporting a vulnerability
 
