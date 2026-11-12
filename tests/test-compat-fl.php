@@ -58,10 +58,15 @@ class Test_Compat_FL extends BLT_Test_Case {
 	}
 
 	/**
-	 * The alias map is exactly the frozen set.
+	 * The alias map is exactly the frozen set; order does not matter.
 	 */
 	public function test_map_is_frozen() {
-		$this->assertSame( self::frozen_map(), BLT_Compat_FL::MAP );
+		$expected = self::frozen_map();
+		$actual   = BLT_Compat_FL::MAP;
+		ksort( $expected );
+		ksort( $actual );
+
+		$this->assertSame( $expected, $actual );
 	}
 
 	/**
@@ -72,7 +77,7 @@ class Test_Compat_FL extends BLT_Test_Case {
 	}
 
 	/**
-	 * Firing a canonical position fires its alias, while that position is running.
+	 * Firing a canonical position fires its alias once, while that position is running.
 	 *
 	 * @dataProvider data_aliases
 	 *
@@ -81,6 +86,7 @@ class Test_Compat_FL extends BLT_Test_Case {
 	 */
 	public function test_alias_fires_at_its_position( string $canonical, string $alias ) {
 		$inside = null;
+		$before = did_action( $alias );
 
 		add_action(
 			$alias,
@@ -92,5 +98,6 @@ class Test_Compat_FL extends BLT_Test_Case {
 		BLT_Hooks::fire( $canonical );
 
 		$this->assertTrue( $inside );
+		$this->assertSame( 1, did_action( $alias ) - $before );
 	}
 }

@@ -70,7 +70,44 @@ class Test_Styles_Bridge extends BLT_Test_Case {
 	}
 
 	/**
-	 * The link color feeds both link and primary, and the button background overrides primary.
+	 * Each Global Styles color field and the roles it feeds.
+	 *
+	 * @return array
+	 */
+	public function data_color_fields() {
+		return array(
+			'text_color'              => array( 'text_color', array( 'text' ) ),
+			'h_color'                 => array( 'h_color', array( 'heading' ) ),
+			'link_color'              => array( 'link_color', array( 'link', 'primary' ) ),
+			'link_hover_color'        => array( 'link_hover_color', array( 'link-hover' ) ),
+			'button_color'            => array( 'button_color', array( 'on-primary' ) ),
+			'button_background'       => array( 'button_background', array( 'primary' ) ),
+			'button_hover_background' => array( 'button_hover_background', array( 'primary-hover' ) ),
+		);
+	}
+
+	/**
+	 * A color field lands, under its tokens, in exactly the roles it feeds.
+	 *
+	 * @dataProvider data_color_fields
+	 *
+	 * @param string   $field Global Styles field.
+	 * @param string[] $roles Roles it should feed.
+	 */
+	public function test_color_field_feeds_its_roles( string $field, array $roles ) {
+		FLBuilderGlobalStyles::$settings = (object) array( $field => 'abcdef' );
+
+		$css = BLT_Styles::bridge_css();
+
+		foreach ( $roles as $role ) {
+			$this->assertMatchesRegularExpression( "/--blt-{$role}: (var\\(--ds-[a-z-]+, )+#abcdef\\)+;/", $css, $role );
+		}
+
+		$this->assertSame( count( $roles ), substr_count( $css, '#abcdef' ) );
+	}
+
+	/**
+	 * The button background overrides the link color for primary, and link keeps the link color.
 	 */
 	public function test_button_background_wins_primary_over_link_color() {
 		FLBuilderGlobalStyles::$settings = (object) array(
@@ -108,6 +145,26 @@ class Test_Styles_Bridge extends BLT_Test_Case {
 		$this->assertStringContainsString( '--blt-font-size: var(--ds-text-base, 18px);', $css );
 		$this->assertStringContainsString( '--blt-font-heading: var(--ds-font-heading, var(--ds-font-display, inherit));', $css );
 		$this->assertStringContainsString( '--blt-heading-weight: var(--ds-weight-bold, var(--ds-weight-semibold, 600));', $css );
+	}
+
+	/**
+	 * A heading family fills font-heading, a one-word family stays unquoted, a default weight is skipped, and a unitless size gets px.
+	 */
+	public function test_global_styles_typography_edge_cases() {
+		FLBuilderGlobalStyles::$settings = (object) array(
+			'text_typography' => array( 'font_size' => array( 'length' => '17' ) ),
+			'h_typography'    => array(
+				'font_family' => 'Georgia',
+				'font_weight' => 'default',
+			),
+		);
+
+		$css = BLT_Styles::bridge_css();
+
+		$this->assertStringContainsString( '--blt-font-heading: var(--ds-font-heading, var(--ds-font-display, Georgia, sans-serif));', $css );
+		$this->assertStringContainsString( '--blt-heading-weight: var(--ds-weight-bold, var(--ds-weight-semibold, 700));', $css );
+		$this->assertStringContainsString( '--blt-font-size: var(--ds-text-base, 17px);', $css );
+		$this->assertStringContainsString( '--blt-font-body: var(--ds-font-body, system-ui,', $css );
 	}
 
 	/**

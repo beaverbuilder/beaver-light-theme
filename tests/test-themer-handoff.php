@@ -56,6 +56,21 @@ class Test_Themer_Handoff extends BLT_Test_Case {
 	}
 
 	/**
+	 * A header and a footer layout together replace both.
+	 */
+	public function test_both_layouts_swap_both() {
+		FLThemeBuilderLayoutData::$header_ids = array( 12 );
+		FLThemeBuilderLayoutData::$footer_ids = array( 34 );
+
+		BLT_Themer::setup_headers_and_footers();
+
+		$this->assertSame( 10, has_action( 'blt_header', 'FLThemeBuilderLayoutRenderer::render_header' ) );
+		$this->assertSame( 10, has_action( 'blt_footer', array( 'BLT_Themer', 'render_themer_footer' ) ) );
+		$this->assertFalse( has_action( 'blt_header', array( 'BLT_Chrome', 'render_header' ) ) );
+		$this->assertFalse( has_action( 'blt_footer', array( 'BLT_Chrome', 'render_footer' ) ) );
+	}
+
+	/**
 	 * The swapped-in header renders through the blt_header position.
 	 */
 	public function test_themer_header_renders() {
@@ -96,7 +111,7 @@ class Test_Themer_Handoff extends BLT_Test_Case {
 		add_action(
 			$hook,
 			static function () use ( $marker ) {
-				echo $marker; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
+				echo $marker;
 			},
 			$priority
 		);
