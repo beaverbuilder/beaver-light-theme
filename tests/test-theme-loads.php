@@ -32,4 +32,11 @@ class Test_Theme_Loads extends WP_UnitTestCase {
 		$this->assertTrue( defined( 'BEAVER_LIGHT_VERSION' ) );
 		$this->assertNotSame( '', BEAVER_LIGHT_VERSION );
 	}
+
+	/**
+	 * The text domain is the locked slug, whatever the checkout's folder is named.
+	 */
+	public function test_text_domain_is_locked_slug() {
+		$this->assertSame( 'beaver-light', wp_get_theme()->get( 'TextDomain' ) );
+	}
 }

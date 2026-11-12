@@ -60,7 +60,7 @@ Every pull request runs three checks, and all three must pass:
 |---|---|
 | `Lint` | `composer install`, then `composer lint` |
 | `Test` | `composer test` (needs a local MySQL and a throwaway database; see `CONTRIBUTING.md`) |
-| `Theme Check` | `.github/scripts/build-zip.sh`, then `php .github/scripts/check-metadata.php <theme folder>` |
+| `Theme Check` | `.github/scripts/build-zip.sh`, then `rm -rf build/extract && unzip -q build/beaver-light.zip -d build/extract && php .github/scripts/check-metadata.php build/extract/beaver-light` |
 
 Add or update a test in `tests/` when you add or change logic. Do not switch
 off a lint rule or baseline a finding to get a check green.
