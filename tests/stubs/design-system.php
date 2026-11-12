@@ -16,11 +16,11 @@ namespace FL\DesignSystem\DesignSystem;
 class DesignSystemPostType {
 
 	/**
-	 * What get_default() returns.
+	 * Design system posts by the id the fl_ds_site_default option stores.
 	 *
-	 * @var \WP_Post|null
+	 * @var \WP_Post[]
 	 */
-	public static $default = null;
+	public static $posts = array();
 
 	/**
 	 * What get_structured_data() returns as its tokens.
@@ -30,12 +30,14 @@ class DesignSystemPostType {
 	public static $tokens = array();
 
 	/**
-	 * The site default design system post.
+	 * The site default design system post: the option resolved to a post, null when the option is unset or its post is gone.
 	 *
 	 * @return \WP_Post|null
 	 */
 	public static function get_default(): ?\WP_Post {
-		return self::$default;
+		$id = get_option( 'fl_ds_site_default' );
+
+		return is_string( $id ) ? ( self::$posts[ $id ] ?? null ) : null;
 	}
 
 	/**

@@ -263,14 +263,4 @@ class Test_Color_Inference extends BLT_Test_Case {
 		$this->assertArrayNotHasKey( 'primary-hover', $roles );
 		$this->assertSame( 'color-charcoal', $roles['text'] );
 	}
-
-	/**
-	 * A fixture's token map.
-	 *
-	 * @param string $name Fixture name.
-	 * @return array
-	 */
-	private static function fixture( string $name ): array {
-		return json_decode( file_get_contents( __DIR__ . "/fixtures/kits/{$name}.json" ), true );
-	}
 }

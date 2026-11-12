@@ -2,9 +2,9 @@
 /**
  * Tier 1 of the styling chain: the Beaver Builder AI design system.
  *
- * The theme only uses the plugin's public seams: the FL_DESIGN_SYSTEM_FILE
- * constant, the fl_ds_site_default option, the site-wide loading filter and
- * the .fl-ds-page scope class its typography floor targets.
+ * The theme only uses the plugin's public seams: the site default read
+ * DesignSystemPostType::get_default(), the site-wide loading filter and the
+ * .fl-ds-page scope class its typography floor targets.
  *
  * @package Beaver_Light_Theme
  */
@@ -15,6 +15,11 @@ defined( 'ABSPATH' ) || exit;
  * Design system hookup.
  */
 final class BLT_Design_System {
+
+	/**
+	 * The design system plugin's post type class.
+	 */
+	const POST_TYPE = '\FL\DesignSystem\DesignSystem\DesignSystemPostType';
 
 	/**
 	 * Wire the site-wide loading answer.
@@ -33,7 +38,23 @@ final class BLT_Design_System {
 	 * @return bool
 	 */
 	public static function has_site_default(): bool {
-		return defined( 'FL_DESIGN_SYSTEM_FILE' ) && (bool) get_option( 'fl_ds_site_default' );
+		return null !== self::default_post();
+	}
+
+	/**
+	 * The site default design system post, if one exists and its plugin is loaded; gates on the post, not the option, because the option can outlive its post.
+	 *
+	 * @since 0.1.0
+	 * @return WP_Post|null
+	 */
+	public static function default_post(): ?WP_Post {
+		if ( ! class_exists( self::POST_TYPE ) ) {
+			return null;
+		}
+
+		$post = call_user_func( array( self::POST_TYPE, 'get_default' ) );
+
+		return $post instanceof WP_Post ? $post : null;
 	}
 
 	/**

@@ -2,9 +2,9 @@
 /**
  * Read the site default design system's color tokens.
  *
- * Uses only the design system plugin's public token read:
- * DesignSystemPostType::get_default() and get_structured_data()['tokens'],
- * which return names and values as stored.
+ * Uses only the design system plugin's public token read,
+ * DesignSystemPostType::get_structured_data()['tokens'], on the post
+ * BLT_Design_System::default_post() returns; it holds names and values as stored.
  *
  * @package Beaver_Light_Theme
  */
@@ -15,11 +15,6 @@ defined( 'ABSPATH' ) || exit;
  * Design system token reader.
  */
 final class BLT_Design_Tokens {
-
-	/**
-	 * The design system plugin's post type class.
-	 */
-	const POST_TYPE = '\FL\DesignSystem\DesignSystem\DesignSystemPostType';
 
 	/**
 	 * A color token name; the category prefix is fixed and the rest is free.
@@ -47,24 +42,6 @@ final class BLT_Design_Tokens {
 	const MAX_LENGTH = 512;
 
 	/**
-	 * The site default design system post, if one exists and its plugin is loaded.
-	 *
-	 * Gates on the post, not the option, because the option can outlive its post.
-	 *
-	 * @since 0.1.0
-	 * @return WP_Post|null
-	 */
-	public static function default_post(): ?WP_Post {
-		if ( ! class_exists( self::POST_TYPE ) ) {
-			return null;
-		}
-
-		$post = call_user_func( array( self::POST_TYPE, 'get_default' ) );
-
-		return $post instanceof WP_Post ? $post : null;
-	}
-
-	/**
 	 * A design system's stored token map.
 	 *
 	 * @since 0.1.0
@@ -72,7 +49,7 @@ final class BLT_Design_Tokens {
 	 * @return array Custom property name => stored value.
 	 */
 	public static function tokens( WP_Post $post ): array {
-		$data = call_user_func( array( self::POST_TYPE, 'get_structured_data' ), $post );
+		$data = call_user_func( array( BLT_Design_System::POST_TYPE, 'get_structured_data' ), $post );
 
 		return is_array( $data['tokens'] ?? null ) ? $data['tokens'] : array();
 	}

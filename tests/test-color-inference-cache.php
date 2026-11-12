@@ -33,9 +33,9 @@ class Test_Color_Inference_Cache extends BLT_Test_Case {
 	 * @param mixed $stored Stored option value; a null key is replaced with the current key.
 	 */
 	public function test_malformed_cache_recomputes( $stored ) {
-		$post                          = self::factory()->post->create_and_get();
-		DesignSystemPostType::$default = $post;
-		DesignSystemPostType::$tokens  = self::fixture( 'agent-plain' );
+		$post = self::factory()->post->create_and_get();
+		self::set_default_design_system( $post );
+		DesignSystemPostType::$tokens = self::fixture( 'agent-plain' );
 		if ( is_array( $stored ) && array_key_exists( 'key', $stored ) ) {
 			$stored['key'] = BLT_Color_Inference::cache_key( $post );
 		}
@@ -48,9 +48,9 @@ class Test_Color_Inference_Cache extends BLT_Test_Case {
 	 * Roles are cached per revision: the same key reuses them, a newer modified time recomputes.
 	 */
 	public function test_cache_follows_revision() {
-		$post                          = self::factory()->post->create_and_get();
-		DesignSystemPostType::$default = $post;
-		DesignSystemPostType::$tokens  = self::fixture( 'agent-plain' );
+		$post = self::factory()->post->create_and_get();
+		self::set_default_design_system( $post );
+		DesignSystemPostType::$tokens = self::fixture( 'agent-plain' );
 
 		$first = BLT_Color_Inference::roles();
 		$this->assertSame( 'color-canvas', $first['surface'] );
@@ -71,15 +71,5 @@ class Test_Color_Inference_Cache extends BLT_Test_Case {
 	public function test_no_default_writes_nothing() {
 		$this->assertSame( array(), BLT_Color_Inference::roles() );
 		$this->assertFalse( get_option( 'blt_color_roles' ) );
-	}
-
-	/**
-	 * A fixture's token map.
-	 *
-	 * @param string $name Fixture name.
-	 * @return array
-	 */
-	private static function fixture( string $name ): array {
-		return json_decode( file_get_contents( __DIR__ . "/fixtures/kits/{$name}.json" ), true );
 	}
 }

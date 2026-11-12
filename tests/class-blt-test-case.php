@@ -44,12 +44,35 @@ abstract class BLT_Test_Case extends WP_UnitTestCase {
 		FLThemeBuilderLayoutData::$header_ids = array();
 		FLThemeBuilderLayoutData::$footer_ids = array();
 
-		\FL\DesignSystem\DesignSystem\DesignSystemPostType::$default = null;
+		\FL\DesignSystem\DesignSystem\DesignSystemPostType::$posts  = array();
 		\FL\DesignSystem\DesignSystem\DesignSystemPostType::$tokens  = array();
 
 		// The request caches live for one request, and each test is a new request.
 		self::clear_request_cache( 'BLT_Global_Styles', 'values' );
 		self::clear_request_cache( 'BLT_Color_Inference', 'roles' );
+	}
+
+	/**
+	 * Make a post the site default design system, through the option the stand-in resolves.
+	 *
+	 * @param WP_Post $post Design system post.
+	 * @return void
+	 */
+	protected static function set_default_design_system( WP_Post $post ): void {
+		$id = 'ds-' . $post->ID;
+
+		\FL\DesignSystem\DesignSystem\DesignSystemPostType::$posts[ $id ] = $post;
+		update_option( 'fl_ds_site_default', $id );
+	}
+
+	/**
+	 * A fixture's token map.
+	 *
+	 * @param string $name Fixture name.
+	 * @return array
+	 */
+	protected static function fixture( string $name ): array {
+		return json_decode( file_get_contents( __DIR__ . "/fixtures/kits/{$name}.json" ), true );
 	}
 
 	/**

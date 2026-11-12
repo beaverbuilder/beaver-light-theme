@@ -69,23 +69,22 @@ class Test_Design_Tokens extends BLT_Test_Case {
 	}
 
 	/**
-	 * Nested fallbacks that fan out across a chain stop at the step budget instead of taking exponential time.
+	 * Nested fallbacks that fan out stop at the step budget: unbounded, color-0 reaches its last fallback after tens of thousands of steps, so null proves the budget stopped it.
 	 */
 	public function test_fan_out_is_bounded() {
 		$tokens = array();
 		for ( $i = 0; $i < 10; $i++ ) {
-			$value = '#000000';
-			for ( $j = 0; $j < 10; $j++ ) {
+			$value = 0 === $i ? '#000000' : 'var(--ds-color-missing)';
+			for ( $j = 0; $j < 3; $j++ ) {
 				$value = 'var(--ds-color-' . ( $i + 1 ) . ", {$value})";
 			}
-			$tokens[ "--ds-color-{$i}" ] = str_replace( '#000000', 'var(--ds-color-missing)', $value );
+			$tokens[ "--ds-color-{$i}" ] = $value;
 		}
 
-		$start  = microtime( true );
 		$colors = BLT_Design_Tokens::colors( $tokens );
 
-		$this->assertLessThan( 1.0, microtime( true ) - $start );
 		$this->assertCount( 10, $colors );
+		$this->assertNull( $colors['color-0'] );
 	}
 
 	/**
@@ -117,24 +116,11 @@ class Test_Design_Tokens extends BLT_Test_Case {
 	}
 
 	/**
-	 * With no default post, even when the option is still set, there is nothing to read.
+	 * A post's stored tokens are read through the public call.
 	 */
-	public function test_no_default_post() {
-		update_option( 'fl_ds_site_default', 'a-uuid-whose-post-is-gone' );
+	public function test_reads_tokens() {
+		DesignSystemPostType::$tokens = array( '--ds-color-text' => '#111' );
 
-		$this->assertNull( BLT_Design_Tokens::default_post() );
-	}
-
-	/**
-	 * The default post's stored tokens are read through the public call.
-	 */
-	public function test_reads_default_tokens() {
-		DesignSystemPostType::$default = self::factory()->post->create_and_get();
-		DesignSystemPostType::$tokens  = array( '--ds-color-text' => '#111' );
-
-		$post = BLT_Design_Tokens::default_post();
-
-		$this->assertSame( DesignSystemPostType::$default, $post );
-		$this->assertSame( array( '--ds-color-text' => '#111' ), BLT_Design_Tokens::tokens( $post ) );
+		$this->assertSame( array( '--ds-color-text' => '#111' ), BLT_Design_Tokens::tokens( self::factory()->post->create_and_get() ) );
 	}
 }

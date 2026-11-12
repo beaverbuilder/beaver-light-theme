@@ -45,7 +45,7 @@ final class BLT_Color_Inference {
 			return self::$roles;
 		}
 
-		$post = BLT_Design_Tokens::default_post();
+		$post = BLT_Design_System::default_post();
 
 		if ( null === $post ) {
 			self::$roles = array();
@@ -112,7 +112,7 @@ final class BLT_Color_Inference {
 		foreach ( BLT_Styles::roles() as $role => $def ) {
 			$matched = array_values( array_intersect( $def[0], $names ) );
 
-			if ( isset( $matched[0] ) && 0 === strpos( $matched[0], 'color-' ) ) {
+			if ( isset( $matched[0] ) ) {
 				$seeds[ $role ] = $matched[0];
 			}
 		}

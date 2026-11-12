@@ -189,8 +189,8 @@ class Test_Styles_Bridge extends BLT_Test_Case {
 	 * An inferred token lands after the listed names and before the fallback; name-matched roles are untouched.
 	 */
 	public function test_inferred_token_joins_the_chain() {
-		DesignSystemPostType::$default = self::factory()->post->create_and_get();
-		DesignSystemPostType::$tokens  = array(
+		self::set_default_design_system( self::factory()->post->create_and_get() );
+		DesignSystemPostType::$tokens = array(
 			'--ds-color-text'  => '#1e2328',
 			'--ds-color-paper' => '#ffffff',
 		);
@@ -206,8 +206,8 @@ class Test_Styles_Bridge extends BLT_Test_Case {
 	 * A stored role name that is not a plain token name is never printed.
 	 */
 	public function test_tampered_cache_is_not_printed() {
-		$post                          = self::factory()->post->create_and_get();
-		DesignSystemPostType::$default = $post;
+		$post = self::factory()->post->create_and_get();
+		self::set_default_design_system( $post );
 		update_option(
 			'blt_color_roles',
 			array(
