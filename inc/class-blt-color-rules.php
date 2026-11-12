@@ -47,11 +47,11 @@ final class BLT_Color_Rules {
 	const HOVER_MIN_SATURATION = 0.2;
 
 	/**
-	 * Measurable colors, name => RGB channels, in token map order.
+	 * The measurable colors the roles are picked from.
 	 *
-	 * @var array
+	 * @var BLT_Color_Palette
 	 */
-	private $colors;
+	private $palette;
 
 	/**
 	 * Role => token name, seeded from known names and filled in by the rules.
@@ -68,8 +68,8 @@ final class BLT_Color_Rules {
 	 * @param array $seeds  Role => token name matched by known names.
 	 */
 	public function __construct( array $colors, array $seeds ) {
-		$this->colors = $colors;
-		$this->roles  = $seeds;
+		$this->palette = new BLT_Color_Palette( $colors );
+		$this->roles   = $seeds;
 	}
 
 	/**
@@ -92,11 +92,11 @@ final class BLT_Color_Rules {
 		$this->infer_primary();
 		$this->infer_primary_hover();
 
-		if ( isset( $this->roles['primary'] ) && $this->ratio( $this->roles['primary'], $this->roles['surface'] ) >= self::TEXT_CONTRAST ) {
+		if ( isset( $this->roles['primary'] ) && $this->palette->ratio( $this->roles['primary'], $this->roles['surface'] ) >= self::TEXT_CONTRAST ) {
 			$this->fill( 'link', $this->roles['primary'] );
 		}
 
-		if ( isset( $this->roles['link'], $this->roles['primary-hover'] ) && $this->ratio( $this->roles['primary-hover'], $this->roles['surface'] ) >= self::TEXT_CONTRAST ) {
+		if ( isset( $this->roles['link'], $this->roles['primary-hover'] ) && $this->palette->ratio( $this->roles['primary-hover'], $this->roles['surface'] ) >= self::TEXT_CONTRAST ) {
 			$this->fill( 'link-hover', $this->roles['primary-hover'] );
 		}
 
@@ -110,15 +110,15 @@ final class BLT_Color_Rules {
 	 * @return bool Whether both roles are set.
 	 */
 	private function infer_surface_and_text(): bool {
-		$surface = $this->roles['surface'] ?? $this->best( null, array( 'BLT_Color', 'luminance' ) );
-		$text    = $this->roles['text'] ?? $this->best(
+		$surface = $this->roles['surface'] ?? $this->palette->best( null, array( 'BLT_Color', 'luminance' ) );
+		$text    = $this->roles['text'] ?? $this->palette->best(
 			null,
 			static function ( array $rgb ): float {
 				return -BLT_Color::luminance( $rgb );
 			}
 		);
 
-		if ( null === $surface || null === $text || $this->ratio( $text, $surface ) < self::TEXT_CONTRAST ) {
+		if ( null === $surface || null === $text || $this->palette->ratio( $text, $surface ) < self::TEXT_CONTRAST ) {
 			return false;
 		}
 
@@ -135,11 +135,11 @@ final class BLT_Color_Rules {
 	 * @return string|null
 	 */
 	private function pick_muted(): ?string {
-		$surface = $this->colors[ $this->roles['surface'] ];
+		$surface = $this->palette->rgb( $this->roles['surface'] );
 		$text    = $this->roles['text'];
-		$ceiling = $this->ratio( $text, $this->roles['surface'] ) * self::MUTED_MAX_SHARE;
+		$ceiling = $this->palette->ratio( $text, $this->roles['surface'] ) * self::MUTED_MAX_SHARE;
 
-		return $this->best(
+		return $this->palette->best(
 			static function ( array $rgb, string $name ) use ( $surface, $text, $ceiling ): bool {
 				$contrast = BLT_Color::contrast( $rgb, $surface );
 				$neutral  = BLT_Color::saturation( $rgb ) <= self::NEUTRAL_MAX_SATURATION;
@@ -158,9 +158,9 @@ final class BLT_Color_Rules {
 	 * @return string|null
 	 */
 	private function pick_line(): ?string {
-		$surface = $this->colors[ $this->roles['surface'] ];
+		$surface = $this->palette->rgb( $this->roles['surface'] );
 
-		return $this->best(
+		return $this->palette->best(
 			static function ( array $rgb ) use ( $surface ): bool {
 				$contrast = BLT_Color::contrast( $rgb, $surface );
 				$in_range = $contrast >= self::LINE_MIN_CONTRAST && $contrast <= self::LINE_MAX_CONTRAST;
@@ -179,8 +179,8 @@ final class BLT_Color_Rules {
 	 * @return void
 	 */
 	private function infer_primary(): void {
-		$surface = $this->colors[ $this->roles['surface'] ];
-		$primary = $this->roles['primary'] ?? $this->best(
+		$surface = $this->palette->rgb( $this->roles['surface'] );
+		$primary = $this->roles['primary'] ?? $this->palette->best(
 			function ( array $rgb, string $name ) use ( $surface ): bool {
 				$colorful = BLT_Color::saturation( $rgb ) >= self::PRIMARY_MIN_SATURATION && BLT_Color::chroma( $rgb ) >= self::PRIMARY_MIN_CHROMA;
 				return $colorful && BLT_Color::contrast( $rgb, $surface ) >= self::UI_CONTRAST && null !== $this->on_primary_for( $name );
@@ -203,15 +203,15 @@ final class BLT_Color_Rules {
 	 * @return string|null
 	 */
 	private function on_primary_for( string $primary ): ?string {
-		$fill = $this->colors[ $primary ] ?? null;
-		$on   = $this->roles['on-primary'] ?? ( null === $fill ? null : $this->best(
+		$fill = $this->palette->rgb( $primary );
+		$on   = $this->roles['on-primary'] ?? ( null === $fill ? null : $this->palette->best(
 			null,
 			static function ( array $rgb ) use ( $fill ): float {
 				return BLT_Color::contrast( $rgb, $fill );
 			}
 		) );
 
-		return ( null !== $on && $this->ratio( $on, $primary ) >= self::TEXT_CONTRAST ) ? $on : null;
+		return ( null !== $on && $this->palette->ratio( $on, $primary ) >= self::TEXT_CONTRAST ) ? $on : null;
 	}
 
 	/**
@@ -221,8 +221,8 @@ final class BLT_Color_Rules {
 	 * @return void
 	 */
 	private function infer_primary_hover(): void {
-		$fill = isset( $this->roles['primary'], $this->roles['on-primary'] ) ? ( $this->colors[ $this->roles['primary'] ] ?? null ) : null;
-		$on   = null === $fill ? null : ( $this->colors[ $this->roles['on-primary'] ] ?? null );
+		$fill = isset( $this->roles['primary'], $this->roles['on-primary'] ) ? $this->palette->rgb( $this->roles['primary'] ) : null;
+		$on   = null === $fill ? null : $this->palette->rgb( $this->roles['on-primary'] );
 
 		// A gray primary has no hue for a hover shade to keep.
 		if ( null === $on || BLT_Color::saturation( $fill ) < self::HOVER_MIN_SATURATION ) {
@@ -234,7 +234,7 @@ final class BLT_Color_Rules {
 
 		$this->fill(
 			'primary-hover',
-			$this->best(
+			$this->palette->best(
 				static function ( array $rgb ) use ( $hue, $luminance, $on ): bool {
 					$same = BLT_Color::hue_distance( $rgb, $hue ) <= self::HOVER_MAX_HUE_SHIFT && BLT_Color::saturation( $rgb ) >= self::HOVER_MIN_SATURATION;
 					return $same && BLT_Color::luminance( $rgb ) < $luminance && BLT_Color::contrast( $rgb, $on ) >= self::TEXT_CONTRAST;
@@ -242,44 +242,6 @@ final class BLT_Color_Rules {
 				array( 'BLT_Color', 'luminance' )
 			)
 		);
-	}
-
-	/**
-	 * The highest-scoring color that passes the filter; ties go to the earlier token.
-	 *
-	 * @since 0.1.0
-	 * @param callable|null $filter Receives RGB channels and name; null accepts all.
-	 * @param callable      $score  Receives RGB channels.
-	 * @return string|null Token name.
-	 */
-	private function best( ?callable $filter, callable $score ): ?string {
-		$best  = null;
-		$floor = -INF;
-
-		foreach ( $this->colors as $name => $rgb ) {
-			$value = (float) call_user_func( $score, $rgb );
-
-			if ( $value > $floor && ( null === $filter || call_user_func( $filter, $rgb, (string) $name ) ) ) {
-				$best  = (string) $name;
-				$floor = $value;
-			}
-		}
-
-		return $best;
-	}
-
-	/**
-	 * Contrast between two tokens, 0 when either cannot be measured.
-	 *
-	 * @since 0.1.0
-	 * @param string $a Token name.
-	 * @param string $b Token name.
-	 * @return float
-	 */
-	private function ratio( string $a, string $b ): float {
-		$known = isset( $this->colors[ $a ], $this->colors[ $b ] );
-
-		return $known ? BLT_Color::contrast( $this->colors[ $a ], $this->colors[ $b ] ) : 0.0;
 	}
 
 	/**
