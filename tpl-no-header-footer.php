@@ -11,4 +11,5 @@
 
 defined( 'ABSPATH' ) || exit;
 
-require BLT_DIR . '/singular.php';
+// locate_template() prefers a child theme's singular.php over this theme's.
+locate_template( 'singular.php', true, false );
