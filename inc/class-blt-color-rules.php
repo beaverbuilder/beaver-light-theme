@@ -34,10 +34,16 @@ final class BLT_Color_Rules {
 	/** Below this a color is a tinted neutral, not a brand color. */
 	const PRIMARY_MIN_SATURATION = 0.35;
 
+	/** HSL saturation runs high near black, so a brand color also needs this much chroma. */
+	const PRIMARY_MIN_CHROMA = 0.15;
+
+	/** Muted text must be visibly lighter than text, at most this share of its contrast. */
+	const MUTED_MAX_SHARE = 0.75;
+
 	/** A hover shade keeps the primary's hue within this many degrees. */
 	const HOVER_MAX_HUE_SHIFT = 20.0;
 
-	/** A gray's hue is meaningless, so it cannot match the primary's. */
+	/** A gray's hue is meaningless, so it cannot be or match the primary's hue. */
 	const HOVER_MIN_SATURATION = 0.2;
 
 	/**
@@ -90,7 +96,7 @@ final class BLT_Color_Rules {
 			$this->fill( 'link', $this->roles['primary'] );
 		}
 
-		if ( isset( $this->roles['primary-hover'] ) && $this->ratio( $this->roles['primary-hover'], $this->roles['surface'] ) >= self::TEXT_CONTRAST ) {
+		if ( isset( $this->roles['link'], $this->roles['primary-hover'] ) && $this->ratio( $this->roles['primary-hover'], $this->roles['surface'] ) >= self::TEXT_CONTRAST ) {
 			$this->fill( 'link-hover', $this->roles['primary-hover'] );
 		}
 
@@ -123,7 +129,7 @@ final class BLT_Color_Rules {
 	}
 
 	/**
-	 * The neutral with the lowest contrast on the surface that still reads as text, and is lighter than text.
+	 * The neutral with the lowest contrast on the surface that still reads as text, and is visibly lighter than text.
 	 *
 	 * @since 0.1.0
 	 * @return string|null
@@ -131,13 +137,13 @@ final class BLT_Color_Rules {
 	private function pick_muted(): ?string {
 		$surface = $this->colors[ $this->roles['surface'] ];
 		$text    = $this->roles['text'];
-		$ceiling = $this->ratio( $text, $this->roles['surface'] );
+		$ceiling = $this->ratio( $text, $this->roles['surface'] ) * self::MUTED_MAX_SHARE;
 
 		return $this->best(
 			static function ( array $rgb, string $name ) use ( $surface, $text, $ceiling ): bool {
 				$contrast = BLT_Color::contrast( $rgb, $surface );
 				$neutral  = BLT_Color::saturation( $rgb ) <= self::NEUTRAL_MAX_SATURATION;
-				return $name !== $text && $neutral && $contrast >= self::TEXT_CONTRAST && $contrast < $ceiling;
+				return $name !== $text && $neutral && $contrast >= self::TEXT_CONTRAST && $contrast <= $ceiling;
 			},
 			static function ( array $rgb ) use ( $surface ): float {
 				return -BLT_Color::contrast( $rgb, $surface );
@@ -167,9 +173,7 @@ final class BLT_Color_Rules {
 	}
 
 	/**
-	 * Primary is the most colorful saturated color that works as a fill and has a readable on-primary.
-	 *
-	 * Ranked by chroma, because HSL saturation stays flat across a shade series and would pick the darkest shade.
+	 * Primary is the most colorful color that works as a fill and has a readable on-primary; chroma ranks, since HSL saturation is flat across a shade series.
 	 *
 	 * @since 0.1.0
 	 * @return void
@@ -178,8 +182,8 @@ final class BLT_Color_Rules {
 		$surface = $this->colors[ $this->roles['surface'] ];
 		$primary = $this->roles['primary'] ?? $this->best(
 			function ( array $rgb, string $name ) use ( $surface ): bool {
-				$fill = BLT_Color::saturation( $rgb ) >= self::PRIMARY_MIN_SATURATION && BLT_Color::contrast( $rgb, $surface ) >= self::UI_CONTRAST;
-				return $fill && null !== $this->on_primary_for( $name );
+				$colorful = BLT_Color::saturation( $rgb ) >= self::PRIMARY_MIN_SATURATION && BLT_Color::chroma( $rgb ) >= self::PRIMARY_MIN_CHROMA;
+				return $colorful && BLT_Color::contrast( $rgb, $surface ) >= self::UI_CONTRAST && null !== $this->on_primary_for( $name );
 			},
 			array( 'BLT_Color', 'chroma' )
 		);
@@ -211,7 +215,7 @@ final class BLT_Color_Rules {
 	}
 
 	/**
-	 * The primary's hue at the nearest lower luminance, still readable under on-primary.
+	 * The primary's hue at the nearest lower luminance, still readable under on-primary; none for a gray primary.
 	 *
 	 * @since 0.1.0
 	 * @return void
@@ -220,7 +224,8 @@ final class BLT_Color_Rules {
 		$fill = isset( $this->roles['primary'], $this->roles['on-primary'] ) ? ( $this->colors[ $this->roles['primary'] ] ?? null ) : null;
 		$on   = null === $fill ? null : ( $this->colors[ $this->roles['on-primary'] ] ?? null );
 
-		if ( null === $on ) {
+		// A gray primary has no hue for a hover shade to keep.
+		if ( null === $on || BLT_Color::saturation( $fill ) < self::HOVER_MIN_SATURATION ) {
 			return;
 		}
 
@@ -231,8 +236,7 @@ final class BLT_Color_Rules {
 			'primary-hover',
 			$this->best(
 				static function ( array $rgb ) use ( $hue, $luminance, $on ): bool {
-					$shift = abs( BLT_Color::hue( $rgb ) - $hue );
-					$same  = min( $shift, 360 - $shift ) <= self::HOVER_MAX_HUE_SHIFT && BLT_Color::saturation( $rgb ) >= self::HOVER_MIN_SATURATION;
+					$same = BLT_Color::hue_distance( $rgb, $hue ) <= self::HOVER_MAX_HUE_SHIFT && BLT_Color::saturation( $rgb ) >= self::HOVER_MIN_SATURATION;
 					return $same && BLT_Color::luminance( $rgb ) < $luminance && BLT_Color::contrast( $rgb, $on ) >= self::TEXT_CONTRAST;
 				},
 				array( 'BLT_Color', 'luminance' )

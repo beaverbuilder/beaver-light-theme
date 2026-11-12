@@ -96,7 +96,7 @@ final class BLT_Styles {
 			$tokens   = $def[0];
 
 			// An inferred name comes from a stored option, so only a plain token name is printed.
-			if ( isset( $inferred[ $role ] ) && preg_match( '/^color-[a-z0-9-]+$/i', $inferred[ $role ] ) ) {
+			if ( is_string( $inferred[ $role ] ?? null ) && preg_match( '/^color-[a-zA-Z0-9-]+$/D', $inferred[ $role ] ) ) {
 				$tokens[] = $inferred[ $role ];
 			}
 

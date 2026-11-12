@@ -121,12 +121,32 @@ class Test_Color_Inference extends BLT_Test_Case {
 					'surface' => 'color-starlight',
 					'text'    => 'color-night',
 					'heading' => 'color-night',
-					'muted'   => 'color-night-raised',
 					'line'    => 'color-haze',
+				),
+			),
+			// Text is named; brick outranks pine on chroma, and pine-light has no readable on-primary.
+			'hue names'      => array(
+				'hue-named',
+				array(
+					'surface'    => 'color-white',
+					'muted'      => 'color-text-light',
+					'primary'    => 'color-brick',
+					'on-primary' => 'color-white',
+					'link'       => 'color-brick',
+				),
+			),
+			// The near-black plums pass HSL saturation but not chroma, and brass fails as a fill on white.
+			'deep hues'      => array(
+				'hue-named-deep',
+				array(
+					'surface' => 'color-white',
+					'text'    => 'color-plum',
+					'heading' => 'color-plum',
 				),
 			),
 			'no contrast'    => array( 'low-contrast', array() ),
 			'all name-known' => array( 'role-named-status', array() ),
+			'mostly named'   => array( 'role-named', array() ),
 		);
 	}
 
@@ -187,6 +207,95 @@ class Test_Color_Inference extends BLT_Test_Case {
 		$this->assertSame( 'color-paper', $roles['surface'] );
 		$this->assertArrayNotHasKey( 'primary', $roles );
 		$this->assertArrayNotHasKey( 'link', $roles );
+	}
+
+	/**
+	 * A seeded surface that cannot be measured switches inference off rather than guessing around it.
+	 */
+	public function test_unmeasurable_seed_stops_inference() {
+		$tokens = self::fixture( 'agent-plain' ) + array( '--ds-color-surface' => 'oklch(98% 0 0)' );
+
+		$this->assertSame( array(), BLT_Color_Inference::infer( $tokens ) );
+	}
+
+	/**
+	 * A gray primary gets no hover shade, even when a color shares its nominal hue.
+	 */
+	public function test_gray_primary_gets_no_hover() {
+		$roles = BLT_Color_Inference::infer(
+			array(
+				'--ds-color-paper'   => '#ffffff',
+				'--ds-color-ink'     => '#111111',
+				'--ds-color-primary' => '#6b7280',
+				'--ds-color-navy'    => '#1e3a8a',
+			)
+		);
+
+		$this->assertArrayNotHasKey( 'primary-hover', $roles );
+		$this->assertArrayNotHasKey( 'link-hover', $roles );
+	}
+
+	/**
+	 * Link-hover never commits without a link, so a link cannot change color only on hover.
+	 */
+	public function test_link_hover_needs_link() {
+		$roles = BLT_Color_Inference::infer(
+			array(
+				'--ds-color-surface' => '#ede6d6',
+				'--ds-color-white'   => '#ffffff',
+				'--ds-color-ink'     => '#111111',
+				'--ds-color-brand'   => '#2f7a5a',
+				'--ds-color-brand-2' => '#1f5a41',
+			)
+		);
+
+		$this->assertSame( 'color-brand', $roles['primary'] );
+		$this->assertSame( 'color-brand-2', $roles['primary-hover'] );
+		$this->assertArrayNotHasKey( 'link', $roles );
+		$this->assertArrayNotHasKey( 'link-hover', $roles );
+	}
+
+	/**
+	 * A seeded on-primary that is unreadable on every fill keeps primary open.
+	 */
+	public function test_seeded_on_primary_must_be_readable() {
+		$roles = BLT_Color_Inference::infer( self::fixture( 'agent-plain' ) + array( '--ds-color-on-primary' => '#0b6e4f' ) );
+
+		$this->assertArrayNotHasKey( 'primary', $roles );
+		$this->assertArrayNotHasKey( 'primary-hover', $roles );
+		$this->assertSame( 'color-charcoal', $roles['text'] );
+	}
+
+	/**
+	 * A malformed cache is recomputed rather than trusted.
+	 *
+	 * @return array
+	 */
+	public function data_malformed_cache() {
+		return array(
+			'not an array'    => array( 'garbage' ),
+			'no key'          => array( array( 'roles' => array() ) ),
+			'roles not array' => array( array( 'key' => null, 'roles' => 'x' ) ),
+		);
+	}
+
+	/**
+	 * A malformed stored option is replaced with fresh roles.
+	 *
+	 * @dataProvider data_malformed_cache
+	 *
+	 * @param mixed $stored Stored option value; a null key is replaced with the current key.
+	 */
+	public function test_malformed_cache_recomputes( $stored ) {
+		$post                          = self::factory()->post->create_and_get();
+		DesignSystemPostType::$default = $post;
+		DesignSystemPostType::$tokens  = self::fixture( 'agent-plain' );
+		if ( is_array( $stored ) && array_key_exists( 'key', $stored ) ) {
+			$stored['key'] = BLT_Color_Inference::cache_key( $post );
+		}
+		update_option( 'blt_color_roles', $stored );
+
+		$this->assertSame( 'color-canvas', BLT_Color_Inference::roles()['surface'] );
 	}
 
 	/**

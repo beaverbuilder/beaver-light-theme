@@ -64,7 +64,37 @@ class Test_Design_Tokens extends BLT_Test_Case {
 		$colors = BLT_Design_Tokens::colors( $tokens );
 
 		$this->assertNotNull( $colors['color-8'] );
+		$this->assertNull( $colors['color-9'] );
 		$this->assertNull( $colors['color-12'] );
+	}
+
+	/**
+	 * Nested fallbacks that fan out across a chain stop at the step budget instead of taking exponential time.
+	 */
+	public function test_fan_out_is_bounded() {
+		$tokens = array();
+		for ( $i = 0; $i < 10; $i++ ) {
+			$value = '#000000';
+			for ( $j = 0; $j < 10; $j++ ) {
+				$value = 'var(--ds-color-' . ( $i + 1 ) . ", {$value})";
+			}
+			$tokens[ "--ds-color-{$i}" ] = str_replace( '#000000', 'var(--ds-color-missing)', $value );
+		}
+
+		$start  = microtime( true );
+		$colors = BLT_Design_Tokens::colors( $tokens );
+
+		$this->assertLessThan( 1.0, microtime( true ) - $start );
+		$this->assertCount( 10, $colors );
+	}
+
+	/**
+	 * An overlong value is not measured.
+	 */
+	public function test_overlong_value_is_skipped() {
+		$colors = BLT_Design_Tokens::colors( array( '--ds-color-long' => str_repeat( ' ', 600 ) . '#fff' ) );
+
+		$this->assertNull( $colors['color-long'] );
 	}
 
 	/**
@@ -77,6 +107,8 @@ class Test_Design_Tokens extends BLT_Test_Case {
 				'--ds-system-ink'     => '#111111',
 				'--ds-color-'         => '#222222',
 				'--ds-color-bad name' => '#333333',
+				'--DS-color-upper'    => '#444444',
+				"--ds-color-nl\n"     => '#555555',
 				'--ds-color-ink'      => 'var(--ds-system-ink)',
 			)
 		);

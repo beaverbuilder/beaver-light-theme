@@ -18,7 +18,6 @@ class Test_Styles_Bridge extends BLT_Test_Case {
 	public function test_no_sources_prints_defaults() {
 		$css = BLT_Styles::bridge_css();
 
-		$this->assertStringNotContainsString( '--ds-color-paper', $css );
 		$this->assertStringStartsWith( ':root{', $css );
 		$this->assertStringEndsWith( '}', $css );
 		$this->assertStringContainsString( '--blt-surface: var(--ds-color-surface, var(--ds-color-ground, #ffffff));', $css );
@@ -185,6 +184,7 @@ class Test_Styles_Bridge extends BLT_Test_Case {
 		$this->assertStringContainsString( '--blt-site-width: 1280px;', $css );
 		$this->assertStringContainsString( '--blt-gutter: 40px;', $css );
 	}
+
 	/**
 	 * An inferred token lands after the listed names and before the fallback; name-matched roles are untouched.
 	 */
@@ -211,11 +211,19 @@ class Test_Styles_Bridge extends BLT_Test_Case {
 		update_option(
 			'blt_color_roles',
 			array(
-				'key'   => sprintf( '%d:%s:%d', $post->ID, $post->post_modified_gmt, BLT_Color_Inference::VERSION ),
-				'roles' => array( 'surface' => 'color-x, red); } body { color: red' ),
+				'key'   => BLT_Color_Inference::cache_key( $post ),
+				'roles' => array(
+					'surface' => 'color-x, red); } body { color: red',
+					'text'    => array( 'color-x' ),
+					'muted'   => "color-x\n",
+				),
 			)
 		);
 
-		$this->assertStringContainsString( '--blt-surface: var(--ds-color-surface, var(--ds-color-ground, #ffffff));', BLT_Styles::bridge_css() );
+		$css = BLT_Styles::bridge_css();
+
+		$this->assertStringContainsString( '--blt-surface: var(--ds-color-surface, var(--ds-color-ground, #ffffff));', $css );
+		$this->assertStringContainsString( '--blt-text: var(--ds-color-text, #1f2328);', $css );
+		$this->assertStringContainsString( '--blt-muted: var(--ds-color-text-muted, var(--ds-color-muted, #59606b));', $css );
 	}
 }

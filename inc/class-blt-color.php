@@ -129,6 +129,20 @@ final class BLT_Color {
 	}
 
 	/**
+	 * Distance around the hue wheel from a color to a hue.
+	 *
+	 * @since 0.1.0
+	 * @param float[] $rgb RGB channels.
+	 * @param float   $hue Degrees.
+	 * @return float Degrees, 0 to 180.
+	 */
+	public static function hue_distance( array $rgb, float $hue ): float {
+		$shift = abs( self::hue( $rgb ) - $hue );
+
+		return min( $shift, 360 - $shift );
+	}
+
+	/**
 	 * Parse 3, 4, 6 or 8 hex digits.
 	 *
 	 * @since 0.1.0

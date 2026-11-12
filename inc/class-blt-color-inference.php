@@ -52,7 +52,7 @@ final class BLT_Color_Inference {
 			return self::$roles;
 		}
 
-		$key    = sprintf( '%d:%s:%d', $post->ID, $post->post_modified_gmt, self::VERSION );
+		$key    = self::cache_key( $post );
 		$stored = get_option( self::OPTION );
 
 		if ( is_array( $stored ) && ( $stored['key'] ?? '' ) === $key && is_array( $stored['roles'] ?? null ) ) {
@@ -70,6 +70,19 @@ final class BLT_Color_Inference {
 		);
 
 		return self::$roles;
+	}
+
+	/**
+	 * The revision the cached roles belong to: the post, its last save, the rules and the known names.
+	 *
+	 * @since 0.1.0
+	 * @param WP_Post $post Design system post.
+	 * @return string
+	 */
+	public static function cache_key( WP_Post $post ): string {
+		$names = substr( md5( (string) wp_json_encode( array_column( BLT_Styles::roles(), 0 ) ) ), 0, 8 );
+
+		return sprintf( '%d:%s:%d:%s', $post->ID, $post->post_modified_gmt, self::VERSION, $names );
 	}
 
 	/**

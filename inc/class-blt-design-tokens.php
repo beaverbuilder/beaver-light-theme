@@ -24,17 +24,27 @@ final class BLT_Design_Tokens {
 	/**
 	 * A color token name; the category prefix is fixed and the rest is free.
 	 */
-	const COLOR_NAME = '/^--ds-(color-[a-z0-9-]+)$/i';
+	const COLOR_NAME = '/^--ds-(color-[a-zA-Z0-9-]+)$/D';
 
 	/**
 	 * A var() reference, with an optional fallback.
 	 */
-	const REFERENCE = '/^var\(\s*(--[a-z0-9_-]+)\s*(?:,(.*))?\)$/is';
+	const REFERENCE = '/^var\(\s*(--[a-z0-9_-]+)\s*(?:,(.*))?\)$/isD';
 
 	/**
 	 * How many references deep a value may resolve.
 	 */
 	const MAX_DEPTH = 8;
+
+	/**
+	 * How many resolve steps one token may take, since nested fallbacks fan out.
+	 */
+	const MAX_STEPS = 64;
+
+	/**
+	 * Longer values are not colors, and nested fallbacks cost memory in proportion to length squared.
+	 */
+	const MAX_LENGTH = 512;
 
 	/**
 	 * The site default design system post, if one exists and its plugin is loaded.
@@ -82,7 +92,8 @@ final class BLT_Design_Tokens {
 				continue;
 			}
 
-			$resolved            = self::resolve( $value, $tokens, array( $name ) );
+			$budget              = self::MAX_STEPS;
+			$resolved            = self::resolve( $value, $tokens, array( $name ), $budget );
 			$colors[ $match[1] ] = null === $resolved ? null : BLT_Color::parse( $resolved );
 		}
 
@@ -96,10 +107,11 @@ final class BLT_Design_Tokens {
 	 * @param mixed    $value   Stored value.
 	 * @param array    $tokens  Custom property name => stored value.
 	 * @param string[] $visited Names already followed, against cycles.
-	 * @return string|null Null for a non-string, a cycle, or a missing reference with no fallback.
+	 * @param int      $budget  Resolve steps left for this token.
+	 * @return string|null Null for a non-string, an overlong value, a cycle, a missing reference with no fallback, or a spent budget.
 	 */
-	private static function resolve( $value, array $tokens, array $visited ): ?string {
-		if ( ! is_string( $value ) ) {
+	private static function resolve( $value, array $tokens, array $visited, int &$budget ): ?string {
+		if ( ! is_string( $value ) || strlen( $value ) > self::MAX_LENGTH || --$budget < 0 ) {
 			return null;
 		}
 
@@ -110,12 +122,12 @@ final class BLT_Design_Tokens {
 		$name     = $match[1];
 		$fallback = isset( $match[2] ) && '' !== trim( $match[2] ) ? $match[2] : null;
 		$followed = isset( $tokens[ $name ] ) && ! in_array( $name, $visited, true ) && count( $visited ) <= self::MAX_DEPTH;
-		$resolved = $followed ? self::resolve( $tokens[ $name ], $tokens, array_merge( $visited, array( $name ) ) ) : null;
+		$resolved = $followed ? self::resolve( $tokens[ $name ], $tokens, array_merge( $visited, array( $name ) ), $budget ) : null;
 
 		if ( null !== $resolved || null === $fallback ) {
 			return $resolved;
 		}
 
-		return self::resolve( $fallback, $tokens, $visited );
+		return self::resolve( $fallback, $tokens, $visited, $budget );
 	}
 }
