@@ -9,7 +9,7 @@
  *
  * Rule of thumb: the theme styles what the theme renders. Headings, links and
  * buttons are styled only on theme surfaces (.blt-prose, archives, chrome),
- * never inside .fl-builder-content.
+ * never inside .fl-builder-content. Text fields are the one exception.
  */
 
 @layer blt-reset, blt-base, blt-layout, blt-prose, blt-components;
@@ -150,12 +150,17 @@
 		color: var(--blt-on-primary);
 	}
 
-	:where(.blt-comments, .blt-404, .blt-no-results, .blt-prose) :is(input:not([type="submit"]):not([type="checkbox"]), textarea) {
+	/* Text fields in Beaver Builder modules get the same look, so a contact form is not left with browser defaults. */
+	:where(.blt-comments, .blt-404, .blt-no-results, .blt-prose) :is(input:not([type="submit"]):not([type="checkbox"]), textarea),
+	:where(.fl-builder-content) :is(input:is(:not([type]), [type="text"], [type="email"], [type="tel"], [type="url"], [type="search"], [type="password"], [type="number"]), textarea) {
 		background: var(--blt-surface);
 		border: 1px solid var(--blt-line);
 		border-radius: var(--blt-radius);
 		color: var(--blt-text);
 		padding: 0.6em 0.75em;
+	}
+
+	:where(.blt-comments, .blt-404, .blt-no-results, .blt-prose) :is(input:not([type="submit"]):not([type="checkbox"]), textarea) {
 		width: 100%;
 	}
 
