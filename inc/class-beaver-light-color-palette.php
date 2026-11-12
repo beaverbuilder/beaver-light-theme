@@ -1,8 +1,8 @@
 <?php
 /**
- * Selection over a design system's measurable colors, for BLT_Color_Rules.
+ * Selection over a design system's measurable colors, for Beaver_Light_Color_Rules.
  *
- * @package Beaver_Light_Theme
+ * @package Beaver_Light
  */
 
 defined( 'ABSPATH' ) || exit;
@@ -10,7 +10,7 @@ defined( 'ABSPATH' ) || exit;
 /**
  * Measurable colors by token name, with the picks the rules make from them.
  */
-final class BLT_Color_Palette {
+final class Beaver_Light_Color_Palette {
 
 	/**
 	 * Measurable colors, name => RGB channels, in token map order.
@@ -75,6 +75,6 @@ final class BLT_Color_Palette {
 	public function ratio( string $a, string $b ): float {
 		$known = isset( $this->colors[ $a ], $this->colors[ $b ] );
 
-		return $known ? BLT_Color::contrast( $this->colors[ $a ], $this->colors[ $b ] ) : 0.0;
+		return $known ? Beaver_Light_Color::contrast( $this->colors[ $a ], $this->colors[ $b ] ) : 0.0;
 	}
 }

@@ -5,7 +5,7 @@
  * The layout lists come from public static state a test sets, and the
  * renderers print a marker so a test can see where they ran.
  *
- * @package Beaver_Light_Theme
+ * @package Beaver_Light
  */
 
 /**

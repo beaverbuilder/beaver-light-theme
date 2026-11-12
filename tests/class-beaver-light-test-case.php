@@ -2,7 +2,7 @@
 /**
  * Base test case: every test starts from a builder with nothing configured.
  *
- * @package Beaver_Light_Theme
+ * @package Beaver_Light
  */
 
 /**
@@ -11,7 +11,7 @@
  * The stand-ins load for the whole run, so the theme's "builder not installed"
  * guards are not exercised here; with nothing configured, the output matches.
  */
-abstract class BLT_Test_Case extends WP_UnitTestCase {
+abstract class Beaver_Light_Test_Case extends WP_UnitTestCase {
 
 	/**
 	 * Start from empty builder state.
@@ -49,8 +49,8 @@ abstract class BLT_Test_Case extends WP_UnitTestCase {
 		\FL\DesignSystem\DesignSystem\DesignSystemPostType::$tokens  = array();
 
 		// The request caches live for one request, and each test is a new request.
-		self::clear_request_cache( 'BLT_Global_Styles', 'values' );
-		self::clear_request_cache( 'BLT_Color_Inference', 'roles' );
+		self::clear_request_cache( 'Beaver_Light_Global_Styles', 'values' );
+		self::clear_request_cache( 'Beaver_Light_Color_Inference', 'roles' );
 	}
 
 	/**

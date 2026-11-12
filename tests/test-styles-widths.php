@@ -1,14 +1,14 @@
 <?php
 /**
- * Width parity: BLT_Styles::widths().
+ * Width parity: Beaver_Light_Styles::widths().
  *
- * @package Beaver_Light_Theme
+ * @package Beaver_Light
  */
 
 /**
  * The site width matches the builder's row width, and the gutter matches where text sits in a row.
  */
-class Test_Styles_Widths extends BLT_Test_Case {
+class Test_Styles_Widths extends Beaver_Light_Test_Case {
 
 	/**
 	 * Builder global settings and the widths they should produce.
@@ -50,7 +50,7 @@ class Test_Styles_Widths extends BLT_Test_Case {
 				'site'   => $site,
 				'gutter' => $gutter,
 			),
-			BLT_Styles::widths()
+			Beaver_Light_Styles::widths()
 		);
 	}
 }

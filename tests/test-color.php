@@ -1,14 +1,14 @@
 <?php
 /**
- * Color parsing and measurement: BLT_Color.
+ * Color parsing and measurement: Beaver_Light_Color.
  *
- * @package Beaver_Light_Theme
+ * @package Beaver_Light
  */
 
 /**
  * Opaque sRGB formats parse; everything else is skipped, never guessed.
  */
-class Test_Color extends BLT_Test_Case {
+class Test_Color extends Beaver_Light_Test_Case {
 
 	/**
 	 * Each accepted format and the channels it parses to.
@@ -42,7 +42,7 @@ class Test_Color extends BLT_Test_Case {
 	 * @param array  $expected RGB channels.
 	 */
 	public function test_parses( string $value, array $expected ) {
-		$rgb = BLT_Color::parse( $value );
+		$rgb = Beaver_Light_Color::parse( $value );
 
 		$this->assertNotNull( $rgb );
 		foreach ( $expected as $i => $channel ) {
@@ -82,37 +82,37 @@ class Test_Color extends BLT_Test_Case {
 	 * @param string $value CSS value.
 	 */
 	public function test_skips( string $value ) {
-		$this->assertNull( BLT_Color::parse( $value ) );
+		$this->assertNull( Beaver_Light_Color::parse( $value ) );
 	}
 
 	/**
 	 * Contrast follows WCAG: 21 for black on white, 1 for a color on itself, symmetric.
 	 */
 	public function test_contrast() {
-		$white = BLT_Color::parse( '#fff' );
-		$black = BLT_Color::parse( '#000' );
-		$gray  = BLT_Color::parse( '#777' );
+		$white = Beaver_Light_Color::parse( '#fff' );
+		$black = Beaver_Light_Color::parse( '#000' );
+		$gray  = Beaver_Light_Color::parse( '#777' );
 
-		$this->assertEqualsWithDelta( 21.0, BLT_Color::contrast( $black, $white ), 0.001 );
-		$this->assertEqualsWithDelta( 1.0, BLT_Color::contrast( $gray, $gray ), 0.001 );
-		$this->assertEqualsWithDelta( 4.48, BLT_Color::contrast( $white, $gray ), 0.01 );
-		$this->assertSame( BLT_Color::contrast( $white, $gray ), BLT_Color::contrast( $gray, $white ) );
+		$this->assertEqualsWithDelta( 21.0, Beaver_Light_Color::contrast( $black, $white ), 0.001 );
+		$this->assertEqualsWithDelta( 1.0, Beaver_Light_Color::contrast( $gray, $gray ), 0.001 );
+		$this->assertEqualsWithDelta( 4.48, Beaver_Light_Color::contrast( $white, $gray ), 0.01 );
+		$this->assertSame( Beaver_Light_Color::contrast( $white, $gray ), Beaver_Light_Color::contrast( $gray, $white ) );
 	}
 
 	/**
 	 * Saturation, chroma and hue of a few reference colors.
 	 */
 	public function test_saturation_chroma_and_hue() {
-		$red  = BLT_Color::parse( '#ff0000' );
-		$navy = BLT_Color::parse( '#000080' );
-		$gray = BLT_Color::parse( '#808080' );
+		$red  = Beaver_Light_Color::parse( '#ff0000' );
+		$navy = Beaver_Light_Color::parse( '#000080' );
+		$gray = Beaver_Light_Color::parse( '#808080' );
 
-		$this->assertEqualsWithDelta( 1.0, BLT_Color::saturation( $red ), 0.001 );
-		$this->assertEqualsWithDelta( 0.0, BLT_Color::saturation( $gray ), 0.001 );
-		$this->assertEqualsWithDelta( 1.0, BLT_Color::chroma( $red ), 0.001 );
-		$this->assertEqualsWithDelta( 0.502, BLT_Color::chroma( $navy ), 0.001 );
-		$this->assertEqualsWithDelta( 0.0, BLT_Color::hue( $red ), 0.001 );
-		$this->assertEqualsWithDelta( 240.0, BLT_Color::hue( $navy ), 0.001 );
-		$this->assertEqualsWithDelta( 300.0, BLT_Color::hue( BLT_Color::parse( '#ff00ff' ) ), 0.001 );
+		$this->assertEqualsWithDelta( 1.0, Beaver_Light_Color::saturation( $red ), 0.001 );
+		$this->assertEqualsWithDelta( 0.0, Beaver_Light_Color::saturation( $gray ), 0.001 );
+		$this->assertEqualsWithDelta( 1.0, Beaver_Light_Color::chroma( $red ), 0.001 );
+		$this->assertEqualsWithDelta( 0.502, Beaver_Light_Color::chroma( $navy ), 0.001 );
+		$this->assertEqualsWithDelta( 0.0, Beaver_Light_Color::hue( $red ), 0.001 );
+		$this->assertEqualsWithDelta( 240.0, Beaver_Light_Color::hue( $navy ), 0.001 );
+		$this->assertEqualsWithDelta( 300.0, Beaver_Light_Color::hue( Beaver_Light_Color::parse( '#ff00ff' ) ), 0.001 );
 	}
 }

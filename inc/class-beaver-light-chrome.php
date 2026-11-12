@@ -2,10 +2,10 @@
 /**
  * The native header and footer, and the page-shape helpers templates share.
  *
- * Both render through removable actions (blt_header, blt_footer) so Themer
- * layouts can replace them; see BLT_Themer::setup_headers_and_footers().
+ * Both render through removable actions (beaver_light_header, beaver_light_footer) so Themer
+ * layouts can replace them; see Beaver_Light_Themer::setup_headers_and_footers().
  *
- * @package Beaver_Light_Theme
+ * @package Beaver_Light
  */
 
 defined( 'ABSPATH' ) || exit;
@@ -13,7 +13,7 @@ defined( 'ABSPATH' ) || exit;
 /**
  * Header, footer and page-shape helpers.
  */
-final class BLT_Chrome {
+final class Beaver_Light_Chrome {
 
 	/**
 	 * Wire the native header/footer renderers and body classes.
@@ -22,8 +22,8 @@ final class BLT_Chrome {
 	 * @return void
 	 */
 	public static function init(): void {
-		add_action( 'blt_header', array( __CLASS__, 'render_header' ) );
-		add_action( 'blt_footer', array( __CLASS__, 'render_footer' ) );
+		add_action( 'beaver_light_header', array( __CLASS__, 'render_header' ) );
+		add_action( 'beaver_light_footer', array( __CLASS__, 'render_footer' ) );
 		add_filter( 'body_class', array( __CLASS__, 'body_class' ) );
 	}
 
@@ -41,7 +41,7 @@ final class BLT_Chrome {
 		 *
 		 * @param bool $show Default true, false on the No Header/Footer template.
 		 */
-		return (bool) apply_filters( 'blt_header_footer', ! $is_bare_template );
+		return (bool) apply_filters( 'beaver_light_header_footer', ! $is_bare_template );
 	}
 
 	/**
@@ -73,9 +73,9 @@ final class BLT_Chrome {
 	 * @return void
 	 */
 	public static function render_footer(): void {
-		BLT_Hooks::fire( 'blt_footer_open' );
+		Beaver_Light_Hooks::fire( 'beaver_light_footer_open' );
 		get_template_part( 'parts/footer' );
-		BLT_Hooks::fire( 'blt_footer_close' );
+		Beaver_Light_Hooks::fire( 'beaver_light_footer_close' );
 	}
 
 	/**
@@ -87,7 +87,7 @@ final class BLT_Chrome {
 	public static function copyright(): string {
 		$default = sprintf(
 			/* translators: 1: current year, 2: site name. */
-			__( '© %1$s %2$s', 'beaver-light-theme' ),
+			__( '© %1$s %2$s', 'beaver-light' ),
 			wp_date( 'Y' ),
 			get_bloginfo( 'name' )
 		);
@@ -97,7 +97,7 @@ final class BLT_Chrome {
 		 *
 		 * @param string $text Default "© {year} {site name}".
 		 */
-		return (string) apply_filters( 'blt_footer_copyright', $default );
+		return (string) apply_filters( 'beaver_light_footer_copyright', $default );
 	}
 
 	/**

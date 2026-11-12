@@ -1,44 +1,44 @@
 <?php
 /**
- * The frozen fl_* aliases: BLT_Compat_FL.
+ * The frozen fl_* aliases: Beaver_Light_Compat_FL.
  *
- * @package Beaver_Light_Theme
+ * @package Beaver_Light
  */
 
 /**
  * Themer Parts saved against bb-theme keep rendering at the same positions.
  */
-class Test_Compat_FL extends BLT_Test_Case {
+class Test_Compat_FL extends Beaver_Light_Test_Case {
 
 	/**
 	 * The frozen set, written out so a rename or removal fails here (CONTRIBUTING.md, Public surface).
 	 *
-	 * @return array canonical blt_* hook => legacy fl_* alias
+	 * @return array canonical beaver_light_* hook => legacy fl_* alias
 	 */
 	private static function frozen_map(): array {
 		return array(
-			'blt_page_open'            => 'fl_page_open',
-			'blt_page_close'           => 'fl_page_close',
-			'blt_header_before'        => 'fl_before_header',
-			'blt_header_after'         => 'fl_after_header',
-			'blt_content_before'       => 'fl_before_content',
-			'blt_content_open'         => 'fl_content_open',
-			'blt_content_close'        => 'fl_content_close',
-			'blt_content_after'        => 'fl_after_content',
-			'blt_footer_before'        => 'fl_before_footer',
-			'blt_footer_open'          => 'fl_before_footer_widgets',
-			'blt_footer_close'         => 'fl_after_footer_widgets',
-			'blt_footer_after'         => 'fl_after_footer',
-			'blt_entry_before'         => 'fl_before_post',
-			'blt_entry_after'          => 'fl_after_post',
-			'blt_entry_content_before' => 'fl_before_post_content',
-			'blt_entry_content_after'  => 'fl_after_post_content',
-			'blt_entry_meta_open'      => 'fl_post_top_meta_open',
-			'blt_entry_meta_close'     => 'fl_post_top_meta_close',
-			'blt_entry_footer_open'    => 'fl_post_bottom_meta_open',
-			'blt_entry_footer_close'   => 'fl_post_bottom_meta_close',
-			'blt_comments_open'        => 'fl_comments_open',
-			'blt_comments_close'       => 'fl_comments_close',
+			'beaver_light_page_open'            => 'fl_page_open',
+			'beaver_light_page_close'           => 'fl_page_close',
+			'beaver_light_header_before'        => 'fl_before_header',
+			'beaver_light_header_after'         => 'fl_after_header',
+			'beaver_light_content_before'       => 'fl_before_content',
+			'beaver_light_content_open'         => 'fl_content_open',
+			'beaver_light_content_close'        => 'fl_content_close',
+			'beaver_light_content_after'        => 'fl_after_content',
+			'beaver_light_footer_before'        => 'fl_before_footer',
+			'beaver_light_footer_open'          => 'fl_before_footer_widgets',
+			'beaver_light_footer_close'         => 'fl_after_footer_widgets',
+			'beaver_light_footer_after'         => 'fl_after_footer',
+			'beaver_light_entry_before'         => 'fl_before_post',
+			'beaver_light_entry_after'          => 'fl_after_post',
+			'beaver_light_entry_content_before' => 'fl_before_post_content',
+			'beaver_light_entry_content_after'  => 'fl_after_post_content',
+			'beaver_light_entry_meta_open'      => 'fl_post_top_meta_open',
+			'beaver_light_entry_meta_close'     => 'fl_post_top_meta_close',
+			'beaver_light_entry_footer_open'    => 'fl_post_bottom_meta_open',
+			'beaver_light_entry_footer_close'   => 'fl_post_bottom_meta_close',
+			'beaver_light_comments_open'        => 'fl_comments_open',
+			'beaver_light_comments_close'       => 'fl_comments_close',
 		);
 	}
 
@@ -62,7 +62,7 @@ class Test_Compat_FL extends BLT_Test_Case {
 	 */
 	public function test_map_is_frozen() {
 		$expected = self::frozen_map();
-		$actual   = BLT_Compat_FL::MAP;
+		$actual   = Beaver_Light_Compat_FL::MAP;
 		ksort( $expected );
 		ksort( $actual );
 
@@ -73,7 +73,7 @@ class Test_Compat_FL extends BLT_Test_Case {
 	 * Every aliased position is a canonical hook the templates fire.
 	 */
 	public function test_every_alias_targets_a_canonical_hook() {
-		$this->assertSame( array(), array_diff( array_keys( BLT_Compat_FL::MAP ), BLT_Hooks::names() ) );
+		$this->assertSame( array(), array_diff( array_keys( Beaver_Light_Compat_FL::MAP ), Beaver_Light_Hooks::names() ) );
 	}
 
 	/**
@@ -95,7 +95,7 @@ class Test_Compat_FL extends BLT_Test_Case {
 			}
 		);
 
-		BLT_Hooks::fire( $canonical );
+		Beaver_Light_Hooks::fire( $canonical );
 
 		$this->assertTrue( $inside );
 		$this->assertSame( 1, did_action( $alias ) - $before );

@@ -1,18 +1,18 @@
 <?php
 /**
- * Hybrid color role matching: BLT_Color_Inference and BLT_Color_Rules.
+ * Hybrid color role matching: Beaver_Light_Color_Inference and Beaver_Light_Color_Rules.
  *
  * The fixtures are synthetic palettes shaped like the design kits (role names,
  * hue names, status colors, translucent tints) and like agent-written systems
  * with unfamiliar names, var() references and a dark ground.
  *
- * @package Beaver_Light_Theme
+ * @package Beaver_Light
  */
 
 /**
  * A role is matched by name, inferred with passing contrast, or left to fall through.
  */
-class Test_Color_Inference extends BLT_Test_Case {
+class Test_Color_Inference extends Beaver_Light_Test_Case {
 
 	/**
 	 * Every fixture palette.
@@ -38,12 +38,12 @@ class Test_Color_Inference extends BLT_Test_Case {
 	 */
 	public function test_committed_roles_pass_their_checks( string $fixture ) {
 		$tokens   = self::fixture( $fixture );
-		$colors   = BLT_Design_Tokens::colors( $tokens );
-		$seeds    = BLT_Color_Inference::seeds( array_keys( $colors ) );
-		$inferred = BLT_Color_Inference::infer( $tokens );
+		$colors   = Beaver_Light_Design_Tokens::colors( $tokens );
+		$seeds    = Beaver_Light_Color_Inference::seeds( array_keys( $colors ) );
+		$inferred = Beaver_Light_Color_Inference::infer( $tokens );
 		$roles    = $seeds + $inferred;
 		$ratio    = static function ( string $a, string $b ) use ( $roles, $colors ): float {
-			return BLT_Color::contrast( $colors[ $roles[ $a ] ], $colors[ $roles[ $b ] ] );
+			return Beaver_Light_Color::contrast( $colors[ $roles[ $a ] ], $colors[ $roles[ $b ] ] );
 		};
 
 		$this->assertSame( array(), array_intersect_key( $inferred, $seeds ) );
@@ -157,14 +157,14 @@ class Test_Color_Inference extends BLT_Test_Case {
 	 * @param array  $expected Role => token name.
 	 */
 	public function test_pinned_results( string $fixture, array $expected ) {
-		$this->assertSame( $expected, BLT_Color_Inference::infer( self::fixture( $fixture ) ) );
+		$this->assertSame( $expected, Beaver_Light_Color_Inference::infer( self::fixture( $fixture ) ) );
 	}
 
 	/**
 	 * Seeds take the first listed name present, for color roles only.
 	 */
 	public function test_seeds_follow_listed_order() {
-		$seeds = BLT_Color_Inference::seeds( array( 'color-ink', 'color-heading', 'color-accent' ) );
+		$seeds = Beaver_Light_Color_Inference::seeds( array( 'color-ink', 'color-heading', 'color-accent' ) );
 
 		$this->assertSame(
 			array(
@@ -187,14 +187,14 @@ class Test_Color_Inference extends BLT_Test_Case {
 		);
 
 		// The darkest color fails on the seeded dark surface, so nothing is inferred.
-		$this->assertSame( array(), BLT_Color_Inference::infer( $tokens ) );
+		$this->assertSame( array(), Beaver_Light_Color_Inference::infer( $tokens ) );
 	}
 
 	/**
 	 * A role whose check fails is absent while the rest commit.
 	 */
 	public function test_failed_role_is_absent() {
-		$roles = BLT_Color_Inference::infer(
+		$roles = Beaver_Light_Color_Inference::infer(
 			array(
 				'--ds-color-paper' => '#ffffff',
 				'--ds-color-ink'   => '#111111',
@@ -213,14 +213,14 @@ class Test_Color_Inference extends BLT_Test_Case {
 	public function test_unmeasurable_seed_stops_inference() {
 		$tokens = self::fixture( 'agent-plain' ) + array( '--ds-color-surface' => 'oklch(98% 0 0)' );
 
-		$this->assertSame( array(), BLT_Color_Inference::infer( $tokens ) );
+		$this->assertSame( array(), Beaver_Light_Color_Inference::infer( $tokens ) );
 	}
 
 	/**
 	 * A gray primary gets no hover shade, even when a color shares its nominal hue.
 	 */
 	public function test_gray_primary_gets_no_hover() {
-		$roles = BLT_Color_Inference::infer(
+		$roles = Beaver_Light_Color_Inference::infer(
 			array(
 				'--ds-color-paper'   => '#ffffff',
 				'--ds-color-ink'     => '#111111',
@@ -237,7 +237,7 @@ class Test_Color_Inference extends BLT_Test_Case {
 	 * Link-hover never commits without a link, so a link cannot change color only on hover.
 	 */
 	public function test_link_hover_needs_link() {
-		$roles = BLT_Color_Inference::infer(
+		$roles = Beaver_Light_Color_Inference::infer(
 			array(
 				'--ds-color-surface' => '#ede6d6',
 				'--ds-color-white'   => '#ffffff',
@@ -257,7 +257,7 @@ class Test_Color_Inference extends BLT_Test_Case {
 	 * A seeded on-primary that is unreadable on every fill keeps primary open.
 	 */
 	public function test_seeded_on_primary_must_be_readable() {
-		$roles = BLT_Color_Inference::infer( self::fixture( 'agent-plain' ) + array( '--ds-color-on-primary' => '#0b6e4f' ) );
+		$roles = Beaver_Light_Color_Inference::infer( self::fixture( 'agent-plain' ) + array( '--ds-color-on-primary' => '#0b6e4f' ) );
 
 		$this->assertArrayNotHasKey( 'primary', $roles );
 		$this->assertArrayNotHasKey( 'primary-hover', $roles );

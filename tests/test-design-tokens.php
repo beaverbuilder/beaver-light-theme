@@ -1,8 +1,8 @@
 <?php
 /**
- * Reading the site default's color tokens: BLT_Design_Tokens.
+ * Reading the site default's color tokens: Beaver_Light_Design_Tokens.
  *
- * @package Beaver_Light_Theme
+ * @package Beaver_Light
  */
 
 use FL\DesignSystem\DesignSystem\DesignSystemPostType;
@@ -10,13 +10,13 @@ use FL\DesignSystem\DesignSystem\DesignSystemPostType;
 /**
  * Only --ds-color-* tokens are read, with var() references resolved through the map.
  */
-class Test_Design_Tokens extends BLT_Test_Case {
+class Test_Design_Tokens extends Beaver_Light_Test_Case {
 
 	/**
 	 * A var() chain resolves, and a reference's fallback is used when its target is missing.
 	 */
 	public function test_resolves_references() {
-		$colors = BLT_Design_Tokens::colors(
+		$colors = Beaver_Light_Design_Tokens::colors(
 			array(
 				'--ds-color-base'   => '#ffffff',
 				'--ds-color-alias'  => 'var(--ds-color-base)',
@@ -37,7 +37,7 @@ class Test_Design_Tokens extends BLT_Test_Case {
 	 * A cycle, a missing reference with no fallback, and an unparseable value are kept by name but cannot be measured.
 	 */
 	public function test_unmeasurable_tokens_are_null() {
-		$colors = BLT_Design_Tokens::colors(
+		$colors = Beaver_Light_Design_Tokens::colors(
 			array(
 				'--ds-color-a'       => 'var(--ds-color-b)',
 				'--ds-color-b'       => 'var(--ds-color-a)',
@@ -61,7 +61,7 @@ class Test_Design_Tokens extends BLT_Test_Case {
 			$tokens[ "--ds-color-{$i}" ] = 'var(--ds-color-' . ( $i - 1 ) . ')';
 		}
 
-		$colors = BLT_Design_Tokens::colors( $tokens );
+		$colors = Beaver_Light_Design_Tokens::colors( $tokens );
 
 		$this->assertNotNull( $colors['color-8'] );
 		$this->assertNull( $colors['color-9'] );
@@ -81,7 +81,7 @@ class Test_Design_Tokens extends BLT_Test_Case {
 			$tokens[ "--ds-color-{$i}" ] = $value;
 		}
 
-		$colors = BLT_Design_Tokens::colors( $tokens );
+		$colors = Beaver_Light_Design_Tokens::colors( $tokens );
 
 		$this->assertCount( 10, $colors );
 		$this->assertNull( $colors['color-0'] );
@@ -91,7 +91,7 @@ class Test_Design_Tokens extends BLT_Test_Case {
 	 * An overlong value is not measured.
 	 */
 	public function test_overlong_value_is_skipped() {
-		$colors = BLT_Design_Tokens::colors( array( '--ds-color-long' => str_repeat( ' ', 600 ) . '#fff' ) );
+		$colors = Beaver_Light_Design_Tokens::colors( array( '--ds-color-long' => str_repeat( ' ', 600 ) . '#fff' ) );
 
 		$this->assertNull( $colors['color-long'] );
 	}
@@ -100,7 +100,7 @@ class Test_Design_Tokens extends BLT_Test_Case {
 	 * Non-color tokens are ignored, though a color may reference one.
 	 */
 	public function test_ignores_other_categories() {
-		$colors = BLT_Design_Tokens::colors(
+		$colors = Beaver_Light_Design_Tokens::colors(
 			array(
 				'--ds-font-body'      => 'Inter, sans-serif',
 				'--ds-system-ink'     => '#111111',
@@ -121,6 +121,6 @@ class Test_Design_Tokens extends BLT_Test_Case {
 	public function test_reads_tokens() {
 		DesignSystemPostType::$tokens = array( '--ds-color-text' => '#111' );
 
-		$this->assertSame( array( '--ds-color-text' => '#111' ), BLT_Design_Tokens::tokens( self::factory()->post->create_and_get() ) );
+		$this->assertSame( array( '--ds-color-text' => '#111' ), Beaver_Light_Design_Tokens::tokens( self::factory()->post->create_and_get() ) );
 	}
 }

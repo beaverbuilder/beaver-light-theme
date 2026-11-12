@@ -2,7 +2,7 @@
 /**
  * Theme setup: supports, menus, content width.
  *
- * @package Beaver_Light_Theme
+ * @package Beaver_Light
  */
 
 defined( 'ABSPATH' ) || exit;
@@ -16,8 +16,8 @@ defined( 'ABSPATH' ) || exit;
  * @since 0.1.0
  * @return void
  */
-function blt_setup(): void {
-	load_theme_textdomain( 'beaver-light-theme', BLT_DIR . '/languages' );
+function beaver_light_setup(): void {
+	load_theme_textdomain( 'beaver-light', BEAVER_LIGHT_DIR . '/languages' );
 
 	add_theme_support( 'title-tag' );
 	add_theme_support( 'automatic-feed-links' );
@@ -43,12 +43,12 @@ function blt_setup(): void {
 
 	register_nav_menus(
 		array(
-			'header' => __( 'Header Menu', 'beaver-light-theme' ),
-			'footer' => __( 'Footer Menu', 'beaver-light-theme' ),
+			'header' => __( 'Header Menu', 'beaver-light' ),
+			'footer' => __( 'Footer Menu', 'beaver-light' ),
 		)
 	);
 }
-add_action( 'after_setup_theme', 'blt_setup' );
+add_action( 'after_setup_theme', 'beaver_light_setup' );
 
 /**
  * Legacy content width for embeds; theme.json carries the real layout sizes.
@@ -56,10 +56,10 @@ add_action( 'after_setup_theme', 'blt_setup' );
  * @since 0.1.0
  * @return void
  */
-function blt_content_width(): void {
+function beaver_light_content_width(): void {
 	$GLOBALS['content_width'] = 720;
 }
-add_action( 'after_setup_theme', 'blt_content_width', 0 );
+add_action( 'after_setup_theme', 'beaver_light_content_width', 0 );
 
 /**
  * Enqueue the comment-reply script where threaded comments can appear.
@@ -67,9 +67,9 @@ add_action( 'after_setup_theme', 'blt_content_width', 0 );
  * @since 0.1.0
  * @return void
  */
-function blt_enqueue_comment_reply(): void {
+function beaver_light_enqueue_comment_reply(): void {
 	if ( is_singular() && comments_open() && get_option( 'thread_comments' ) ) {
 		wp_enqueue_script( 'comment-reply' );
 	}
 }
-add_action( 'wp_enqueue_scripts', 'blt_enqueue_comment_reply' );
+add_action( 'wp_enqueue_scripts', 'beaver_light_enqueue_comment_reply' );

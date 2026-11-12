@@ -2,7 +2,7 @@
 /**
  * The No Header/Footer page template, part of the theme's public surface (CONTRIBUTING.md).
  *
- * @package Beaver_Light_Theme
+ * @package Beaver_Light
  */
 
 /**
@@ -43,7 +43,7 @@ class Test_No_Header_Footer_Template extends WP_UnitTestCase {
 	private function render_template() {
 		ob_start();
 		try {
-			require BLT_DIR . '/tpl-no-header-footer.php';
+			require BEAVER_LIGHT_DIR . '/tpl-no-header-footer.php';
 		} finally {
 			$output = ob_get_clean();
 		}

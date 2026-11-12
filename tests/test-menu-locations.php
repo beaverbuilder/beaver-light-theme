@@ -2,7 +2,7 @@
 /**
  * Nav menu locations, part of the theme's public surface (CONTRIBUTING.md).
  *
- * @package Beaver_Light_Theme
+ * @package Beaver_Light
  */
 
 /**

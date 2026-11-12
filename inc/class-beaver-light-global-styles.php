@@ -6,7 +6,7 @@
  * pages that carry a builder layout, and a native archive has none. Global
  * Styles is absent from BB Lite, so every method degrades to "no values".
  *
- * @package Beaver_Light_Theme
+ * @package Beaver_Light
  */
 
 defined( 'ABSPATH' ) || exit;
@@ -14,7 +14,7 @@ defined( 'ABSPATH' ) || exit;
 /**
  * Global Styles reader.
  */
-final class BLT_Global_Styles {
+final class Beaver_Light_Global_Styles {
 
 	/**
 	 * Request cache for role values.
@@ -34,7 +34,7 @@ final class BLT_Global_Styles {
 	}
 
 	/**
-	 * Global Styles values keyed by BLT role (see BLT_Styles::roles()).
+	 * Global Styles values keyed by BLT role (see Beaver_Light_Styles::roles()).
 	 *
 	 * @since 0.1.0
 	 * @return array

@@ -4,11 +4,11 @@
  *
  * Every visual value the theme's CSS uses is a --blt-* property, printed once
  * per request. Each role resolves on its own: a design system token wins by
- * mere presence (a known name, else one BLT_Color_Inference picked from the
+ * mere presence (a known name, else one Beaver_Light_Color_Inference picked from the
  * values), then Global Styles, then the theme default. One look, so
  * every change is incremental (see CONTRIBUTING.md).
  *
- * @package Beaver_Light_Theme
+ * @package Beaver_Light
  */
 
 defined( 'ABSPATH' ) || exit;
@@ -16,7 +16,7 @@ defined( 'ABSPATH' ) || exit;
 /**
  * Styling chain and assets.
  */
-final class BLT_Styles {
+final class Beaver_Light_Styles {
 
 	/**
 	 * Wire assets and the theme.json width filter.
@@ -86,8 +86,8 @@ final class BLT_Styles {
 	 * @return string
 	 */
 	public static function bridge_css(): string {
-		$global_styles = BLT_Global_Styles::values();
-		$inferred      = BLT_Color_Inference::roles();
+		$global_styles = Beaver_Light_Global_Styles::values();
+		$inferred      = Beaver_Light_Color_Inference::roles();
 		$widths        = self::widths();
 		$lines         = array();
 
@@ -96,7 +96,7 @@ final class BLT_Styles {
 			$tokens   = $def[0];
 
 			// An inferred name comes from a stored option, so only a plain token name is printed.
-			if ( is_string( $inferred[ $role ] ?? null ) && preg_match( BLT_Design_Tokens::COLOR_NAME, '--ds-' . $inferred[ $role ] ) ) {
+			if ( is_string( $inferred[ $role ] ?? null ) && preg_match( Beaver_Light_Design_Tokens::COLOR_NAME, '--ds-' . $inferred[ $role ] ) ) {
 				$tokens[] = $inferred[ $role ];
 			}
 
@@ -173,7 +173,7 @@ final class BLT_Styles {
 	 * @return array
 	 */
 	public static function editor_settings( array $settings ): array {
-		$settings['styles'][] = array( 'css' => BLT_Global_Styles::palette_css() . self::bridge_css() );
+		$settings['styles'][] = array( 'css' => Beaver_Light_Global_Styles::palette_css() . self::bridge_css() );
 
 		return $settings;
 	}
@@ -185,15 +185,15 @@ final class BLT_Styles {
 	 * @return void
 	 */
 	public static function enqueue(): void {
-		wp_enqueue_style( 'blt-theme', BLT_URI . '/assets/css/theme.css', array(), BLT_VERSION );
-		wp_enqueue_style( 'blt-chrome', BLT_URI . '/assets/css/chrome.css', array( 'blt-theme' ), BLT_VERSION );
-		wp_add_inline_style( 'blt-theme', BLT_Global_Styles::palette_css() . self::bridge_css() );
+		wp_enqueue_style( 'blt-theme', BEAVER_LIGHT_URI . '/assets/css/theme.css', array(), BEAVER_LIGHT_VERSION );
+		wp_enqueue_style( 'blt-chrome', BEAVER_LIGHT_URI . '/assets/css/chrome.css', array( 'blt-theme' ), BEAVER_LIGHT_VERSION );
+		wp_add_inline_style( 'blt-theme', Beaver_Light_Global_Styles::palette_css() . self::bridge_css() );
 
 		wp_enqueue_script(
 			'blt-navigation',
-			BLT_URI . '/assets/js/navigation.js',
+			BEAVER_LIGHT_URI . '/assets/js/navigation.js',
 			array(),
-			BLT_VERSION,
+			BEAVER_LIGHT_VERSION,
 			array(
 				'in_footer' => true,
 				'strategy'  => 'defer',

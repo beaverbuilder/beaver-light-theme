@@ -1,8 +1,8 @@
 <?php
 /**
- * The per-revision cache of inferred color roles: BLT_Color_Inference::roles().
+ * The per-revision cache of inferred color roles: Beaver_Light_Color_Inference::roles().
  *
- * @package Beaver_Light_Theme
+ * @package Beaver_Light
  */
 
 use FL\DesignSystem\DesignSystem\DesignSystemPostType;
@@ -10,7 +10,7 @@ use FL\DesignSystem\DesignSystem\DesignSystemPostType;
 /**
  * Roles are computed once per design system revision and stored in an option.
  */
-class Test_Color_Inference_Cache extends BLT_Test_Case {
+class Test_Color_Inference_Cache extends Beaver_Light_Test_Case {
 
 	/**
 	 * A malformed cache is recomputed rather than trusted.
@@ -37,11 +37,11 @@ class Test_Color_Inference_Cache extends BLT_Test_Case {
 		self::set_default_design_system( $post );
 		DesignSystemPostType::$tokens = self::fixture( 'agent-plain' );
 		if ( is_array( $stored ) && array_key_exists( 'key', $stored ) ) {
-			$stored['key'] = BLT_Color_Inference::cache_key( $post );
+			$stored['key'] = Beaver_Light_Color_Inference::cache_key( $post );
 		}
-		update_option( 'blt_color_roles', $stored );
+		update_option( 'beaver_light_color_roles', $stored );
 
-		$this->assertSame( 'color-canvas', BLT_Color_Inference::roles()['surface'] );
+		$this->assertSame( 'color-canvas', Beaver_Light_Color_Inference::roles()['surface'] );
 	}
 
 	/**
@@ -52,24 +52,24 @@ class Test_Color_Inference_Cache extends BLT_Test_Case {
 		self::set_default_design_system( $post );
 		DesignSystemPostType::$tokens = self::fixture( 'agent-plain' );
 
-		$first = BLT_Color_Inference::roles();
+		$first = Beaver_Light_Color_Inference::roles();
 		$this->assertSame( 'color-canvas', $first['surface'] );
 
 		DesignSystemPostType::$tokens = self::fixture( 'agent-references' );
-		self::clear_request_cache( 'BLT_Color_Inference', 'roles' );
-		$this->assertSame( $first, BLT_Color_Inference::roles() );
+		self::clear_request_cache( 'Beaver_Light_Color_Inference', 'roles' );
+		$this->assertSame( $first, Beaver_Light_Color_Inference::roles() );
 
 		$post->post_modified_gmt = '2030-01-01 00:00:00';
-		self::clear_request_cache( 'BLT_Color_Inference', 'roles' );
-		$this->assertSame( 'color-gray-0', BLT_Color_Inference::roles()['surface'] );
-		$this->assertSame( BLT_Color_Inference::roles(), get_option( 'blt_color_roles' )['roles'] );
+		self::clear_request_cache( 'Beaver_Light_Color_Inference', 'roles' );
+		$this->assertSame( 'color-gray-0', Beaver_Light_Color_Inference::roles()['surface'] );
+		$this->assertSame( Beaver_Light_Color_Inference::roles(), get_option( 'beaver_light_color_roles' )['roles'] );
 	}
 
 	/**
 	 * With no site default nothing is inferred and nothing is written.
 	 */
 	public function test_no_default_writes_nothing() {
-		$this->assertSame( array(), BLT_Color_Inference::roles() );
-		$this->assertFalse( get_option( 'blt_color_roles' ) );
+		$this->assertSame( array(), Beaver_Light_Color_Inference::roles() );
+		$this->assertFalse( get_option( 'beaver_light_color_roles' ) );
 	}
 }

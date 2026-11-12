@@ -6,7 +6,7 @@
  * contrast checks pass; otherwise it is left out and falls through to Global
  * Styles and then the theme default.
  *
- * @package Beaver_Light_Theme
+ * @package Beaver_Light
  */
 
 defined( 'ABSPATH' ) || exit;
@@ -14,7 +14,7 @@ defined( 'ABSPATH' ) || exit;
 /**
  * One inference pass over a design system's colors.
  */
-final class BLT_Color_Rules {
+final class Beaver_Light_Color_Rules {
 
 	/** WCAG AA for body text. */
 	const TEXT_CONTRAST = 4.5;
@@ -49,7 +49,7 @@ final class BLT_Color_Rules {
 	/**
 	 * The measurable colors the roles are picked from.
 	 *
-	 * @var BLT_Color_Palette
+	 * @var Beaver_Light_Color_Palette
 	 */
 	private $palette;
 
@@ -68,7 +68,7 @@ final class BLT_Color_Rules {
 	 * @param array $seeds  Role => token name matched by known names.
 	 */
 	public function __construct( array $colors, array $seeds ) {
-		$this->palette = new BLT_Color_Palette( $colors );
+		$this->palette = new Beaver_Light_Color_Palette( $colors );
 		$this->roles   = $seeds;
 	}
 
@@ -110,11 +110,11 @@ final class BLT_Color_Rules {
 	 * @return bool Whether both roles are set.
 	 */
 	private function infer_surface_and_text(): bool {
-		$surface = $this->roles['surface'] ?? $this->palette->best( null, array( 'BLT_Color', 'luminance' ) );
+		$surface = $this->roles['surface'] ?? $this->palette->best( null, array( 'Beaver_Light_Color', 'luminance' ) );
 		$text    = $this->roles['text'] ?? $this->palette->best(
 			null,
 			static function ( array $rgb ): float {
-				return -BLT_Color::luminance( $rgb );
+				return -Beaver_Light_Color::luminance( $rgb );
 			}
 		);
 
@@ -141,12 +141,12 @@ final class BLT_Color_Rules {
 
 		return $this->palette->best(
 			static function ( array $rgb, string $name ) use ( $surface, $text, $ceiling ): bool {
-				$contrast = BLT_Color::contrast( $rgb, $surface );
-				$neutral  = BLT_Color::saturation( $rgb ) <= self::NEUTRAL_MAX_SATURATION;
+				$contrast = Beaver_Light_Color::contrast( $rgb, $surface );
+				$neutral  = Beaver_Light_Color::saturation( $rgb ) <= self::NEUTRAL_MAX_SATURATION;
 				return $name !== $text && $neutral && $contrast >= self::TEXT_CONTRAST && $contrast <= $ceiling;
 			},
 			static function ( array $rgb ) use ( $surface ): float {
-				return -BLT_Color::contrast( $rgb, $surface );
+				return -Beaver_Light_Color::contrast( $rgb, $surface );
 			}
 		);
 	}
@@ -162,12 +162,12 @@ final class BLT_Color_Rules {
 
 		return $this->palette->best(
 			static function ( array $rgb ) use ( $surface ): bool {
-				$contrast = BLT_Color::contrast( $rgb, $surface );
+				$contrast = Beaver_Light_Color::contrast( $rgb, $surface );
 				$in_range = $contrast >= self::LINE_MIN_CONTRAST && $contrast <= self::LINE_MAX_CONTRAST;
-				return $in_range && BLT_Color::saturation( $rgb ) <= self::NEUTRAL_MAX_SATURATION;
+				return $in_range && Beaver_Light_Color::saturation( $rgb ) <= self::NEUTRAL_MAX_SATURATION;
 			},
 			static function ( array $rgb ) use ( $surface ): float {
-				return -BLT_Color::contrast( $rgb, $surface );
+				return -Beaver_Light_Color::contrast( $rgb, $surface );
 			}
 		);
 	}
@@ -182,10 +182,10 @@ final class BLT_Color_Rules {
 		$surface = $this->palette->rgb( $this->roles['surface'] );
 		$primary = $this->roles['primary'] ?? $this->palette->best(
 			function ( array $rgb, string $name ) use ( $surface ): bool {
-				$colorful = BLT_Color::saturation( $rgb ) >= self::PRIMARY_MIN_SATURATION && BLT_Color::chroma( $rgb ) >= self::PRIMARY_MIN_CHROMA;
-				return $colorful && BLT_Color::contrast( $rgb, $surface ) >= self::UI_CONTRAST && null !== $this->on_primary_for( $name );
+				$colorful = Beaver_Light_Color::saturation( $rgb ) >= self::PRIMARY_MIN_SATURATION && Beaver_Light_Color::chroma( $rgb ) >= self::PRIMARY_MIN_CHROMA;
+				return $colorful && Beaver_Light_Color::contrast( $rgb, $surface ) >= self::UI_CONTRAST && null !== $this->on_primary_for( $name );
 			},
-			array( 'BLT_Color', 'chroma' )
+			array( 'Beaver_Light_Color', 'chroma' )
 		);
 		$on      = null === $primary ? null : $this->on_primary_for( $primary );
 
@@ -207,7 +207,7 @@ final class BLT_Color_Rules {
 		$on   = $this->roles['on-primary'] ?? ( null === $fill ? null : $this->palette->best(
 			null,
 			static function ( array $rgb ) use ( $fill ): float {
-				return BLT_Color::contrast( $rgb, $fill );
+				return Beaver_Light_Color::contrast( $rgb, $fill );
 			}
 		) );
 
@@ -225,21 +225,21 @@ final class BLT_Color_Rules {
 		$on   = null === $fill ? null : $this->palette->rgb( $this->roles['on-primary'] );
 
 		// A gray primary has no hue for a hover shade to keep.
-		if ( null === $on || BLT_Color::saturation( $fill ) < self::HOVER_MIN_SATURATION ) {
+		if ( null === $on || Beaver_Light_Color::saturation( $fill ) < self::HOVER_MIN_SATURATION ) {
 			return;
 		}
 
-		$hue       = BLT_Color::hue( $fill );
-		$luminance = BLT_Color::luminance( $fill );
+		$hue       = Beaver_Light_Color::hue( $fill );
+		$luminance = Beaver_Light_Color::luminance( $fill );
 
 		$this->fill(
 			'primary-hover',
 			$this->palette->best(
 				static function ( array $rgb ) use ( $hue, $luminance, $on ): bool {
-					$same = BLT_Color::hue_distance( $rgb, $hue ) <= self::HOVER_MAX_HUE_SHIFT && BLT_Color::saturation( $rgb ) >= self::HOVER_MIN_SATURATION;
-					return $same && BLT_Color::luminance( $rgb ) < $luminance && BLT_Color::contrast( $rgb, $on ) >= self::TEXT_CONTRAST;
+					$same = Beaver_Light_Color::hue_distance( $rgb, $hue ) <= self::HOVER_MAX_HUE_SHIFT && Beaver_Light_Color::saturation( $rgb ) >= self::HOVER_MIN_SATURATION;
+					return $same && Beaver_Light_Color::luminance( $rgb ) < $luminance && Beaver_Light_Color::contrast( $rgb, $on ) >= self::TEXT_CONTRAST;
 				},
-				array( 'BLT_Color', 'luminance' )
+				array( 'Beaver_Light_Color', 'luminance' )
 			)
 		);
 	}

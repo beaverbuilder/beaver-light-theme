@@ -1,32 +1,32 @@
 <?php
 /**
- * The Themer handoff: BLT_Themer::setup_headers_and_footers().
+ * The Themer handoff: Beaver_Light_Themer::setup_headers_and_footers().
  *
- * @package Beaver_Light_Theme
+ * @package Beaver_Light
  */
 
 /**
  * The native header and footer give way only to Themer layouts that apply.
  */
-class Test_Themer_Handoff extends BLT_Test_Case {
+class Test_Themer_Handoff extends Beaver_Light_Test_Case {
 
 	/**
 	 * The handoff runs on `wp`, once the query knows which layouts apply.
 	 */
 	public function test_handoff_is_hooked_on_wp() {
-		$this->assertSame( 10, has_action( 'wp', array( 'BLT_Themer', 'setup_headers_and_footers' ) ) );
+		$this->assertSame( 10, has_action( 'wp', array( 'Beaver_Light_Themer', 'setup_headers_and_footers' ) ) );
 	}
 
 	/**
 	 * With no Themer layouts, the native header and footer stay.
 	 */
 	public function test_no_layouts_keeps_native_chrome() {
-		BLT_Themer::setup_headers_and_footers();
+		Beaver_Light_Themer::setup_headers_and_footers();
 
-		$this->assertSame( 10, has_action( 'blt_header', array( 'BLT_Chrome', 'render_header' ) ) );
-		$this->assertSame( 10, has_action( 'blt_footer', array( 'BLT_Chrome', 'render_footer' ) ) );
-		$this->assertFalse( has_action( 'blt_header', 'FLThemeBuilderLayoutRenderer::render_header' ) );
-		$this->assertFalse( has_action( 'blt_footer', array( 'BLT_Themer', 'render_themer_footer' ) ) );
+		$this->assertSame( 10, has_action( 'beaver_light_header', array( 'Beaver_Light_Chrome', 'render_header' ) ) );
+		$this->assertSame( 10, has_action( 'beaver_light_footer', array( 'Beaver_Light_Chrome', 'render_footer' ) ) );
+		$this->assertFalse( has_action( 'beaver_light_header', 'FLThemeBuilderLayoutRenderer::render_header' ) );
+		$this->assertFalse( has_action( 'beaver_light_footer', array( 'Beaver_Light_Themer', 'render_themer_footer' ) ) );
 	}
 
 	/**
@@ -35,11 +35,11 @@ class Test_Themer_Handoff extends BLT_Test_Case {
 	public function test_header_layout_swaps_header_only() {
 		FLThemeBuilderLayoutData::$header_ids = array( 12 );
 
-		BLT_Themer::setup_headers_and_footers();
+		Beaver_Light_Themer::setup_headers_and_footers();
 
-		$this->assertFalse( has_action( 'blt_header', array( 'BLT_Chrome', 'render_header' ) ) );
-		$this->assertSame( 10, has_action( 'blt_header', 'FLThemeBuilderLayoutRenderer::render_header' ) );
-		$this->assertSame( 10, has_action( 'blt_footer', array( 'BLT_Chrome', 'render_footer' ) ) );
+		$this->assertFalse( has_action( 'beaver_light_header', array( 'Beaver_Light_Chrome', 'render_header' ) ) );
+		$this->assertSame( 10, has_action( 'beaver_light_header', 'FLThemeBuilderLayoutRenderer::render_header' ) );
+		$this->assertSame( 10, has_action( 'beaver_light_footer', array( 'Beaver_Light_Chrome', 'render_footer' ) ) );
 	}
 
 	/**
@@ -48,11 +48,11 @@ class Test_Themer_Handoff extends BLT_Test_Case {
 	public function test_footer_layout_swaps_footer_only() {
 		FLThemeBuilderLayoutData::$footer_ids = array( 34 );
 
-		BLT_Themer::setup_headers_and_footers();
+		Beaver_Light_Themer::setup_headers_and_footers();
 
-		$this->assertSame( 10, has_action( 'blt_header', array( 'BLT_Chrome', 'render_header' ) ) );
-		$this->assertFalse( has_action( 'blt_footer', array( 'BLT_Chrome', 'render_footer' ) ) );
-		$this->assertSame( 10, has_action( 'blt_footer', array( 'BLT_Themer', 'render_themer_footer' ) ) );
+		$this->assertSame( 10, has_action( 'beaver_light_header', array( 'Beaver_Light_Chrome', 'render_header' ) ) );
+		$this->assertFalse( has_action( 'beaver_light_footer', array( 'Beaver_Light_Chrome', 'render_footer' ) ) );
+		$this->assertSame( 10, has_action( 'beaver_light_footer', array( 'Beaver_Light_Themer', 'render_themer_footer' ) ) );
 	}
 
 	/**
@@ -62,22 +62,22 @@ class Test_Themer_Handoff extends BLT_Test_Case {
 		FLThemeBuilderLayoutData::$header_ids = array( 12 );
 		FLThemeBuilderLayoutData::$footer_ids = array( 34 );
 
-		BLT_Themer::setup_headers_and_footers();
+		Beaver_Light_Themer::setup_headers_and_footers();
 
-		$this->assertSame( 10, has_action( 'blt_header', 'FLThemeBuilderLayoutRenderer::render_header' ) );
-		$this->assertSame( 10, has_action( 'blt_footer', array( 'BLT_Themer', 'render_themer_footer' ) ) );
-		$this->assertFalse( has_action( 'blt_header', array( 'BLT_Chrome', 'render_header' ) ) );
-		$this->assertFalse( has_action( 'blt_footer', array( 'BLT_Chrome', 'render_footer' ) ) );
+		$this->assertSame( 10, has_action( 'beaver_light_header', 'FLThemeBuilderLayoutRenderer::render_header' ) );
+		$this->assertSame( 10, has_action( 'beaver_light_footer', array( 'Beaver_Light_Themer', 'render_themer_footer' ) ) );
+		$this->assertFalse( has_action( 'beaver_light_header', array( 'Beaver_Light_Chrome', 'render_header' ) ) );
+		$this->assertFalse( has_action( 'beaver_light_footer', array( 'Beaver_Light_Chrome', 'render_footer' ) ) );
 	}
 
 	/**
-	 * The swapped-in header renders through the blt_header position.
+	 * The swapped-in header renders through the beaver_light_header position.
 	 */
 	public function test_themer_header_renders() {
 		FLThemeBuilderLayoutData::$header_ids = array( 12 );
-		BLT_Themer::setup_headers_and_footers();
+		Beaver_Light_Themer::setup_headers_and_footers();
 
-		$this->assertSame( '[themer-header]', get_echo( 'do_action', array( 'blt_header' ) ) );
+		$this->assertSame( '[themer-header]', get_echo( 'do_action', array( 'beaver_light_header' ) ) );
 	}
 
 	/**
@@ -85,17 +85,17 @@ class Test_Themer_Handoff extends BLT_Test_Case {
 	 */
 	public function test_footer_positions_fire_around_themer_footer() {
 		FLThemeBuilderLayoutData::$footer_ids = array( 34 );
-		BLT_Themer::setup_headers_and_footers();
+		Beaver_Light_Themer::setup_headers_and_footers();
 
 		// Priority 5 runs before the alias layer's priority-10 callback.
-		$this->echo_on( 'blt_footer_open', '[open]', 5 );
+		$this->echo_on( 'beaver_light_footer_open', '[open]', 5 );
 		$this->echo_on( 'fl_before_footer_widgets', '[fl-open]' );
-		$this->echo_on( 'blt_footer_close', '[close]', 5 );
+		$this->echo_on( 'beaver_light_footer_close', '[close]', 5 );
 		$this->echo_on( 'fl_after_footer_widgets', '[fl-close]' );
 
 		$this->assertSame(
 			'[open][fl-open][themer-footer][close][fl-close]',
-			get_echo( 'do_action', array( 'blt_footer' ) )
+			get_echo( 'do_action', array( 'beaver_light_footer' ) )
 		);
 	}
 

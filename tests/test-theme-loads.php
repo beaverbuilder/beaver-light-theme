@@ -2,7 +2,7 @@
 /**
  * Smoke test: the theme activates and functions.php loads.
  *
- * @package Beaver_Light_Theme
+ * @package Beaver_Light
  */
 
 /**
@@ -29,7 +29,7 @@ class Test_Theme_Loads extends WP_UnitTestCase {
 	 * functions.php defined the version constant.
 	 */
 	public function test_version_constant_is_defined() {
-		$this->assertTrue( defined( 'BLT_VERSION' ) );
-		$this->assertNotSame( '', BLT_VERSION );
+		$this->assertTrue( defined( 'BEAVER_LIGHT_VERSION' ) );
+		$this->assertNotSame( '', BEAVER_LIGHT_VERSION );
 	}
 }

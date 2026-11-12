@@ -6,7 +6,7 @@
  * Registration is unconditional because Themer classes load lazily; the hooks
  * are inert without Themer and the wp-time handoff guards itself.
  *
- * @package Beaver_Light_Theme
+ * @package Beaver_Light
  */
 
 defined( 'ABSPATH' ) || exit;
@@ -14,7 +14,7 @@ defined( 'ABSPATH' ) || exit;
 /**
  * Themer integration.
  */
-final class BLT_Themer {
+final class Beaver_Light_Themer {
 
 	/**
 	 * Wire Themer hooks.
@@ -50,7 +50,7 @@ final class BLT_Themer {
 	public static function register_part_hooks( $groups ): array {
 		$groups = is_array( $groups ) ? $groups : array();
 
-		foreach ( BLT_Hooks::map() as $label => $hooks ) {
+		foreach ( Beaver_Light_Hooks::map() as $label => $hooks ) {
 			$groups[] = array(
 				'label' => $label,
 				'hooks' => $hooks,
@@ -75,13 +75,13 @@ final class BLT_Themer {
 		$footer_ids = FLThemeBuilderLayoutData::get_current_page_footer_ids();
 
 		if ( ! empty( $header_ids ) ) {
-			remove_action( 'blt_header', array( 'BLT_Chrome', 'render_header' ) );
-			add_action( 'blt_header', 'FLThemeBuilderLayoutRenderer::render_header' );
+			remove_action( 'beaver_light_header', array( 'Beaver_Light_Chrome', 'render_header' ) );
+			add_action( 'beaver_light_header', 'FLThemeBuilderLayoutRenderer::render_header' );
 		}
 
 		if ( ! empty( $footer_ids ) ) {
-			remove_action( 'blt_footer', array( 'BLT_Chrome', 'render_footer' ) );
-			add_action( 'blt_footer', array( __CLASS__, 'render_themer_footer' ) );
+			remove_action( 'beaver_light_footer', array( 'Beaver_Light_Chrome', 'render_footer' ) );
+			add_action( 'beaver_light_footer', array( __CLASS__, 'render_themer_footer' ) );
 		}
 	}
 
@@ -92,8 +92,8 @@ final class BLT_Themer {
 	 * @return void
 	 */
 	public static function render_themer_footer(): void {
-		BLT_Hooks::fire( 'blt_footer_open' );
+		Beaver_Light_Hooks::fire( 'beaver_light_footer_open' );
 		FLThemeBuilderLayoutRenderer::render_footer();
-		BLT_Hooks::fire( 'blt_footer_close' );
+		Beaver_Light_Hooks::fire( 'beaver_light_footer_close' );
 	}
 }

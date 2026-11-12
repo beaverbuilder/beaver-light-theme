@@ -1,10 +1,10 @@
 /**
- * Beaver Light Theme: block editor styles.
+ * Beaver Light: block editor styles.
  *
  * Mirrors the .blt-prose rules in theme.css so a post looks the same while
  * it is written. The --blt-* properties are printed into the editor too
- * (BLT_Styles::editor_settings), so Global Styles and design system values
- * reach the editor without a second set of colors here.
+ * (Beaver_Light_Styles::editor_settings), so Global Styles and design system
+ * values reach the editor without a second set of colors here.
  *
  * Unlayered on purpose: no builder or Additional CSS competes in the editor,
  * and core's editor styles would otherwise beat layered rules.

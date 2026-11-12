@@ -2,17 +2,17 @@
 /**
  * Native footer: the copyright line and the footer menu. No widgets.
  *
- * @package Beaver_Light_Theme
+ * @package Beaver_Light
  */
 
 defined( 'ABSPATH' ) || exit;
 ?>
 <footer class="blt-footer">
 	<div class="blt-container blt-footer__inner">
-		<p class="blt-copyright"><?php echo esc_html( BLT_Chrome::copyright() ); ?></p>
+		<p class="blt-copyright"><?php echo esc_html( Beaver_Light_Chrome::copyright() ); ?></p>
 
 		<?php if ( has_nav_menu( 'footer' ) ) : ?>
-			<nav class="blt-footer-nav" aria-label="<?php esc_attr_e( 'Footer', 'beaver-light-theme' ); ?>">
+			<nav class="blt-footer-nav" aria-label="<?php esc_attr_e( 'Footer', 'beaver-light' ); ?>">
 				<?php
 				wp_nav_menu(
 					array(
