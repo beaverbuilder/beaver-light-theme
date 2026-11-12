@@ -24,6 +24,10 @@ require BLT_DIR . '/inc/class-blt-themer.php';
 require BLT_DIR . '/inc/class-blt-chrome.php';
 require BLT_DIR . '/inc/class-blt-global-styles.php';
 require BLT_DIR . '/inc/class-blt-design-system.php';
+require BLT_DIR . '/inc/class-blt-color.php';
+require BLT_DIR . '/inc/class-blt-design-tokens.php';
+require BLT_DIR . '/inc/class-blt-color-rules.php';
+require BLT_DIR . '/inc/class-blt-color-inference.php';
 require BLT_DIR . '/inc/class-blt-styles.php';
 
 BLT_Compat_FL::init();

@@ -4,7 +4,8 @@
  *
  * Every visual value the theme's CSS uses is a --blt-* property, printed once
  * per request. Each role resolves on its own: a design system token wins by
- * mere presence, then Global Styles, then the theme default. One look, so
+ * mere presence (a known name, else one BLT_Color_Inference picked from the
+ * values), then Global Styles, then the theme default. One look, so
  * every change is incremental (see CONTRIBUTING.md).
  *
  * @package Beaver_Light_Theme
@@ -79,19 +80,27 @@ final class BLT_Styles {
 	}
 
 	/**
-	 * The :root block that resolves every role through the chain.
+	 * The :root block that resolves every role through the chain, with any inferred color token after the listed names.
 	 *
 	 * @since 0.1.0
 	 * @return string
 	 */
 	public static function bridge_css(): string {
 		$global_styles = BLT_Global_Styles::values();
+		$inferred      = BLT_Color_Inference::roles();
 		$widths        = self::widths();
 		$lines         = array();
 
 		foreach ( self::roles() as $role => $def ) {
 			$fallback = $global_styles[ $role ] ?? $def[1];
-			$lines[]  = sprintf( '--blt-%s: %s;', $role, self::chain( $def[0], $fallback ) );
+			$tokens   = $def[0];
+
+			// An inferred name comes from a stored option, so only a plain token name is printed.
+			if ( isset( $inferred[ $role ] ) && preg_match( '/^color-[a-z0-9-]+$/i', $inferred[ $role ] ) ) {
+				$tokens[] = $inferred[ $role ];
+			}
+
+			$lines[] = sprintf( '--blt-%s: %s;', $role, self::chain( $tokens, $fallback ) );
 		}
 
 		$lines[] = '--blt-site-width: ' . $widths['site'] . ';';

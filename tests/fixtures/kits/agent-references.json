@@ -1,0 +1,16 @@
+{
+	"--ds-color-gray-0": "#ffffff",
+	"--ds-color-gray-300": "#cfd3d8",
+	"--ds-color-gray-600": "rgb(94 100 110)",
+	"--ds-color-gray-900": "hsl(215 20% 12%)",
+	"--ds-color-blue-600": "#1d4ed8",
+	"--ds-color-blue-800": "#1e3a8a",
+	"--ds-color-page": "var(--ds-color-gray-0)",
+	"--ds-color-copy": "var(--ds-color-gray-900)",
+	"--ds-color-quiet": "var(--ds-color-gray-600)",
+	"--ds-color-rule": "var(--ds-color-gray-300)",
+	"--ds-color-cta": "var(--ds-color-blue-600)",
+	"--ds-color-cta-pressed": "var(--ds-color-blue-800, #000)",
+	"--ds-color-cta-ink": "var(--ds-color-missing, #fff)",
+	"--ds-color-glow": "oklch(70% 0.1 250)"
+}

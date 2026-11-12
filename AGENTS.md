@@ -6,7 +6,7 @@ Beaver Light Theme is a lightweight classic theme built for Beaver Builder. It h
 
 Each style value resolves on its own, strongest first:
 
-1. **Design system token.** When the site has a default Beaver Builder AI design system, its tokens (for example `--ds-color-primary`) win. Change those with Beaver Builder AI's design system abilities.
+1. **Design system token.** When the site has a default Beaver Builder AI design system, its tokens (for example `--ds-color-primary`) win. Token names are free: the theme tries familiar names first, then works out the remaining colors from their values, using a color only when it has enough contrast. Change those with Beaver Builder AI's design system abilities.
 2. **Beaver Builder Global Styles.** Text, heading, link and button colors, and body and heading fonts. These also style Beaver Builder content, so they keep the whole site consistent.
 3. **Theme default.**
 
