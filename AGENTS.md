@@ -23,7 +23,7 @@ On a site without Beaver Builder, restyle the theme with CSS in Appearance → C
 }
 ```
 
-All theme CSS sits in cascade layers, so Additional CSS and any other unlayered CSS wins without extra specificity. The theme never styles inside Beaver Builder layouts (`.fl-builder-content`).
+All theme CSS sits in cascade layers, so Additional CSS and any other unlayered CSS wins without extra specificity. The theme never styles inside Beaver Builder layouts (`.fl-builder-content`), except to give text fields and textareas the same border, padding and radius as its own forms.
 
 **Fonts.** The theme loads no remote fonts. Use system stacks (for example `Georgia, serif` or `system-ui, sans-serif`), or a family the user has installed under Appearance → Fonts (the WordPress Font Library), named exactly as installed with a fallback: `"Inter", system-ui, sans-serif`.
 
