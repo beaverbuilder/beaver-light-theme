@@ -40,6 +40,7 @@ abstract class BLT_Test_Case extends WP_UnitTestCase {
 	 */
 	private static function reset_builder_state(): void {
 		FLBuilderModel::$global_settings      = new stdClass();
+		FLBuilderModel::$builder_enabled      = false;
 		FLBuilderGlobalStyles::$settings      = new stdClass();
 		FLThemeBuilderLayoutData::$header_ids = array();
 		FLThemeBuilderLayoutData::$footer_ids = array();
