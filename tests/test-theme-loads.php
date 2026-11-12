@@ -6,7 +6,7 @@
  */
 
 /**
- * Proves the harness runs against the theme. The real suite is added separately.
+ * Proves the harness runs against the theme.
  */
 class Test_Theme_Loads extends WP_UnitTestCase {
 

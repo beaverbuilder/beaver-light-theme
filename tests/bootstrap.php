@@ -26,3 +26,8 @@ tests_add_filter(
 );
 
 require_once $blt_wp_tests . '/includes/bootstrap.php';
+
+// After WordPress, so the theme boots with no builder present, as on a bare site.
+require_once __DIR__ . '/stubs/beaver-builder.php';
+require_once __DIR__ . '/stubs/beaver-themer.php';
+require_once __DIR__ . '/class-blt-test-case.php';
