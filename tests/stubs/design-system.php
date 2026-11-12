@@ -5,7 +5,7 @@
  * Answers from public static state a test sets, so the suite runs without the
  * plugin. Only the two methods the theme calls exist.
  *
- * @package Beaver_Light_Theme
+ * @package Beaver_Light
  */
 
 namespace FL\DesignSystem\DesignSystem;

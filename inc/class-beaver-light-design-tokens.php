@@ -4,9 +4,9 @@
  *
  * Uses only the design system plugin's public token read,
  * DesignSystemPostType::get_structured_data()['tokens'], on the post
- * BLT_Design_System::default_post() returns; it holds names and values as stored.
+ * Beaver_Light_Design_System::default_post() returns; it holds names and values as stored.
  *
- * @package Beaver_Light_Theme
+ * @package Beaver_Light
  */
 
 defined( 'ABSPATH' ) || exit;
@@ -14,7 +14,7 @@ defined( 'ABSPATH' ) || exit;
 /**
  * Design system token reader.
  */
-final class BLT_Design_Tokens {
+final class Beaver_Light_Design_Tokens {
 
 	/**
 	 * A color token name; the category prefix is fixed and the rest is free.
@@ -49,7 +49,7 @@ final class BLT_Design_Tokens {
 	 * @return array Custom property name => stored value.
 	 */
 	public static function tokens( WP_Post $post ): array {
-		$data = call_user_func( array( BLT_Design_System::POST_TYPE, 'get_structured_data' ), $post );
+		$data = call_user_func( array( Beaver_Light_Design_System::POST_TYPE, 'get_structured_data' ), $post );
 
 		return is_array( $data['tokens'] ?? null ) ? $data['tokens'] : array();
 	}
@@ -71,7 +71,7 @@ final class BLT_Design_Tokens {
 
 			$budget              = self::MAX_STEPS;
 			$resolved            = self::resolve( $value, $tokens, array( $name ), $budget );
-			$colors[ $match[1] ] = null === $resolved ? null : BLT_Color::parse( $resolved );
+			$colors[ $match[1] ] = null === $resolved ? null : Beaver_Light_Color::parse( $resolved );
 		}
 
 		return $colors;

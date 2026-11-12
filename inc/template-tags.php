@@ -2,7 +2,7 @@
 /**
  * Template helpers. Intentionally few.
  *
- * @package Beaver_Light_Theme
+ * @package Beaver_Light
  */
 
 defined( 'ABSPATH' ) || exit;
@@ -13,7 +13,7 @@ defined( 'ABSPATH' ) || exit;
  * @since 0.1.0
  * @return void
  */
-function blt_entry_meta(): void {
+function beaver_light_entry_meta(): void {
 	if ( 'post' !== get_post_type() ) {
 		return;
 	}
@@ -42,10 +42,10 @@ function blt_entry_meta(): void {
  * @since 0.1.0
  * @return string Heading text, may contain markup from get_the_archive_title().
  */
-function blt_archive_title(): string {
+function beaver_light_archive_title(): string {
 	if ( is_search() ) {
 		/* translators: %s: search query. */
-		return sprintf( __( 'Search results for &ldquo;%s&rdquo;', 'beaver-light-theme' ), esc_html( get_search_query() ) );
+		return sprintf( __( 'Search results for &ldquo;%s&rdquo;', 'beaver-light' ), esc_html( get_search_query() ) );
 	}
 
 	if ( is_home() ) {
@@ -65,7 +65,7 @@ function blt_archive_title(): string {
  * @since 0.1.0
  * @return void
  */
-function blt_site_branding(): void {
+function beaver_light_site_branding(): void {
 	if ( has_custom_logo() ) {
 		the_custom_logo();
 		return;

@@ -1,12 +1,12 @@
-# Contributing to Beaver Light Theme
+# Contributing to Beaver Light
 
-Beaver Light Theme is an ultra-minimal theme for Beaver Builder, distributed on WordPress.org. It keeps an unstyled site from looking broken, then gets out of the way. These principles decide what belongs in it. `AGENTS.md` is a different file: it ships with the theme and tells a user's agent how to style it.
+Beaver Light is an ultra-minimal theme for Beaver Builder, distributed on WordPress.org. It keeps an unstyled site from looking broken, then gets out of the way. These principles decide what belongs in it. `AGENTS.md` is a different file: it ships with the theme and tells a user's agent how to style it.
 
 ## Principles
 
 - **No settings.** No Customizer panels, no admin pages, no theme options. The logo, site title, menus, Site Icon and Additional CSS come from WordPress core. Styling comes from Beaver Builder Global Styles or a design system.
 - **One plain look.** White, system fonts, links in the body color with an underline, near-black buttons, neutral grays. The defaults exist only to keep an unstyled site from looking broken, so there is no second look to switch to and nothing for a user to undo.
-- **Each style value resolves on its own:** design system token (a known name, else, for any color role without one, including on a system that uses known names elsewhere, a color token picked by value with passing contrast; see `BLT_Color_Inference`), then Global Styles, then the theme default. Every `--blt-*` property is printed by PHP (`BLT_Styles::bridge_css()`) on the front end and in the block editor.
+- **Each style value resolves on its own:** design system token (a known name, else, for any color role without one, including on a system that uses known names elsewhere, a color token picked by value with passing contrast; see `Beaver_Light_Color_Inference`), then Global Styles, then the theme default. Every `--blt-*` property is printed by PHP (`Beaver_Light_Styles::bridge_css()`) on the front end and in the block editor.
 - **The theme styles what the theme renders.** The header, footer, archives, native posts and pages. Never anything inside `.fl-builder-content`.
 - **Every rule sits in a cascade layer**, so Beaver Builder, a child theme and Additional CSS win without a specificity fight. `editor.css` is the one exception, because nothing competes with it in the editor.
 - **Hybrid theme.** PHP templates for structure, because Beaver Themer attaches through PHP action hooks, and `theme.json` for editor settings only. Colors and fonts stay out of `theme.json` `styles`: WordPress prints those unlayered, and they would beat Global Styles.
@@ -19,8 +19,8 @@ Beaver Light Theme is an ultra-minimal theme for Beaver Builder, distributed on 
 
 These are frozen once the first beta ships. Adding is fine; renaming or removing needs a deprecation path.
 
-- Hook names `blt_*` and the frozen set of `fl_*` aliases in `inc/class-blt-compat-fl.php`. The aliases keep Themer Parts saved against bb-theme rendering after a switch; new positions get `blt_*` names only.
-- Filters `blt_header_footer` and `blt_footer_copyright`.
+- Hook names `beaver_light_*` and the frozen set of `fl_*` aliases in `inc/class-beaver-light-compat-fl.php`. The aliases keep Themer Parts saved against bb-theme rendering after a switch; new positions get `beaver_light_*` names only.
+- Filters `beaver_light_header_footer` and `beaver_light_footer_copyright`.
 - CSS classes `blt-*` and custom properties `--blt-*`.
 - Menu locations `header` and `footer`, and the template file `tpl-no-header-footer.php`. These match bb-theme so menus and page templates survive a switch.
 

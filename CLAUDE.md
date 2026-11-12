@@ -1,4 +1,4 @@
-# Beaver Light Theme: development guide
+# Beaver Light: development guide
 
 Instructions for an agent working on this repository. Read `CONTRIBUTING.md`
 first; it holds the principles that decide what belongs in the theme, and this
@@ -38,11 +38,11 @@ plugin.
 
 ## Names
 
-- PHP functions, classes, hooks and constants use the `blt_` / `BLT_` prefix.
-  CSS classes use `blt-` and custom properties `--blt-`.
-- The text domain is `beaver-light-theme`.
-- The name, slug and prefix are not final (issue #5). Do not rename them as
-  part of other work.
+- The theme is Beaver Light; its slug, folder and text domain are
+  `beaver-light`. "BLT" is its nickname, used in copy and in CSS names.
+- PHP functions, hooks, filters and global variables use the `beaver_light_`
+  prefix, constants `BEAVER_LIGHT_` and classes `Beaver_Light_`. CSS classes
+  and script and style handles use `blt-`, and custom properties `--blt-`.
 - Never define `FL_THEME_VERSION`.
 
 ## Public surface
@@ -75,5 +75,5 @@ The release zip is built from `.gitattributes`: every path marked
 ## Leave alone
 
 - The changelog section of `readme.txt`. Maintainers write it at release.
-- `Version`, `Stable tag` and `BLT_VERSION`, which change together at release.
+- `Version`, `Stable tag` and `BEAVER_LIGHT_VERSION`, which change together at release.
 - `.github/workflows/`. A change there needs a maintainer's review.

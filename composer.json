@@ -1,6 +1,6 @@
 {
 	"name": "beaverbuilder/beaver-light-theme",
-	"description": "Development tooling for Beaver Light Theme. Nothing here ships in the theme zip.",
+	"description": "Development tooling for the Beaver Light theme. Nothing here ships in the theme zip.",
 	"type": "wordpress-theme",
 	"license": "GPL-2.0-or-later",
 	"require-dev": {

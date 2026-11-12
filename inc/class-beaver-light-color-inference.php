@@ -2,12 +2,12 @@
 /**
  * Hybrid color role matching for the site default design system.
  *
- * Known token names are tried first, in CSS, by BLT_Styles::roles(). For each
+ * Known token names are tried first, in CSS, by Beaver_Light_Styles::roles(). For each
  * color role none of them matches, this picks a token from the values and
  * returns its name, so the bridge stays a pure var() chain and scoped
  * overrides still apply. The result is cached per design system revision.
  *
- * @package Beaver_Light_Theme
+ * @package Beaver_Light
  */
 
 defined( 'ABSPATH' ) || exit;
@@ -15,7 +15,7 @@ defined( 'ABSPATH' ) || exit;
 /**
  * Inferred color roles, cached.
  */
-final class BLT_Color_Inference {
+final class Beaver_Light_Color_Inference {
 
 	/**
 	 * Bump when the rules change, so cached results are recomputed.
@@ -25,7 +25,7 @@ final class BLT_Color_Inference {
 	/**
 	 * Option holding the cache key and the inferred roles.
 	 */
-	const OPTION = 'blt_color_roles';
+	const OPTION = 'beaver_light_color_roles';
 
 	/**
 	 * Request cache.
@@ -45,7 +45,7 @@ final class BLT_Color_Inference {
 			return self::$roles;
 		}
 
-		$post = BLT_Design_System::default_post();
+		$post = Beaver_Light_Design_System::default_post();
 
 		if ( null === $post ) {
 			self::$roles = array();
@@ -60,7 +60,7 @@ final class BLT_Color_Inference {
 			return self::$roles;
 		}
 
-		self::$roles = self::infer( BLT_Design_Tokens::tokens( $post ) );
+		self::$roles = self::infer( Beaver_Light_Design_Tokens::tokens( $post ) );
 		update_option(
 			self::OPTION,
 			array(
@@ -80,7 +80,7 @@ final class BLT_Color_Inference {
 	 * @return string
 	 */
 	public static function cache_key( WP_Post $post ): string {
-		$names = substr( md5( (string) wp_json_encode( array_column( BLT_Styles::roles(), 0 ) ) ), 0, 8 );
+		$names = substr( md5( (string) wp_json_encode( array_column( Beaver_Light_Styles::roles(), 0 ) ) ), 0, 8 );
 
 		return sprintf( '%d:%s:%d:%s', $post->ID, $post->post_modified_gmt, self::VERSION, $names );
 	}
@@ -93,8 +93,8 @@ final class BLT_Color_Inference {
 	 * @return array Role => token name, for inferred roles only.
 	 */
 	public static function infer( array $tokens ): array {
-		$colors = BLT_Design_Tokens::colors( $tokens );
-		$rules  = new BLT_Color_Rules( array_filter( $colors ), self::seeds( array_keys( $colors ) ) );
+		$colors = Beaver_Light_Design_Tokens::colors( $tokens );
+		$rules  = new Beaver_Light_Color_Rules( array_filter( $colors ), self::seeds( array_keys( $colors ) ) );
 
 		return $rules->infer();
 	}
@@ -109,7 +109,7 @@ final class BLT_Color_Inference {
 	public static function seeds( array $names ): array {
 		$seeds = array();
 
-		foreach ( BLT_Styles::roles() as $role => $def ) {
+		foreach ( Beaver_Light_Styles::roles() as $role => $def ) {
 			$matched = array_values( array_intersect( $def[0], $names ) );
 
 			if ( isset( $matched[0] ) ) {

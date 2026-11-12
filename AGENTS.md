@@ -1,6 +1,6 @@
-# Beaver Light Theme: guide for agents
+# Beaver Light: guide for agents
 
-Beaver Light Theme is a lightweight classic theme built for Beaver Builder. It has no settings screens. This file is the map for an agent helping someone style or extend it.
+Beaver Light is a lightweight classic theme built for Beaver Builder. It has no settings screens. This file is the map for an agent helping someone style or extend it.
 
 ## Styling: which tool to use
 
@@ -46,7 +46,7 @@ Minimal child theme, two files in a folder such as `blt-child/`:
 ```css
 /*
 Theme Name: BLT Child
-Template: beaver-light-theme
+Template: beaver-light
 */
 ```
 
@@ -72,22 +72,22 @@ Child theme CSS should target the theme's classes and custom properties. All the
 
 ### Filters
 
-- `blt_header_footer` (bool): output the header and footer slots. False on the No Header/Footer template.
-- `blt_footer_copyright` (string): the footer line, default "© {year} {site name}".
+- `beaver_light_header_footer` (bool): output the header and footer slots. False on the No Header/Footer template.
+- `beaver_light_footer_copyright` (string): the footer line, default "© {year} {site name}".
 
 ### Action hooks
 
 Content can be added at these positions with `add_action()`, or as Beaver Themer Parts:
 
-- Page: `blt_page_open`, `blt_page_close`
-- Header: `blt_header_before`, `blt_header_after`
-- Content: `blt_content_before`, `blt_content_open`, `blt_content_close`, `blt_content_after`
-- Loop: `blt_loop_before`, `blt_loop_after`
-- Entry: `blt_entry_before`, `blt_entry_meta_open`, `blt_entry_meta_close`, `blt_entry_content_before`, `blt_entry_content_after`, `blt_entry_footer_open`, `blt_entry_footer_close`, `blt_entry_after`
-- Footer: `blt_footer_before`, `blt_footer_open`, `blt_footer_close`, `blt_footer_after`
-- Comments: `blt_comments_open`, `blt_comments_close`
+- Page: `beaver_light_page_open`, `beaver_light_page_close`
+- Header: `beaver_light_header_before`, `beaver_light_header_after`
+- Content: `beaver_light_content_before`, `beaver_light_content_open`, `beaver_light_content_close`, `beaver_light_content_after`
+- Loop: `beaver_light_loop_before`, `beaver_light_loop_after`
+- Entry: `beaver_light_entry_before`, `beaver_light_entry_meta_open`, `beaver_light_entry_meta_close`, `beaver_light_entry_content_before`, `beaver_light_entry_content_after`, `beaver_light_entry_footer_open`, `beaver_light_entry_footer_close`, `beaver_light_entry_after`
+- Footer: `beaver_light_footer_before`, `beaver_light_footer_open`, `beaver_light_footer_close`, `beaver_light_footer_after`
+- Comments: `beaver_light_comments_open`, `beaver_light_comments_close`
 
-The classic Beaver Builder Theme hook names (`fl_before_header`, `fl_after_content` and so on) also fire at the matching positions, for sites switching from that theme. Prefer the `blt_` names for new work.
+The classic Beaver Builder Theme hook names (`fl_before_header`, `fl_after_content` and so on) also fire at the matching positions, for sites switching from that theme. Prefer the `beaver_light_` names for new work.
 
 ## Beaver Themer
 

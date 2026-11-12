@@ -6,7 +6,7 @@
  * (oklch(), color-mix(), named colors, translucent values) returns null, so
  * inference skips it rather than guessing.
  *
- * @package Beaver_Light_Theme
+ * @package Beaver_Light
  */
 
 defined( 'ABSPATH' ) || exit;
@@ -14,7 +14,7 @@ defined( 'ABSPATH' ) || exit;
 /**
  * Color parser and WCAG measurements; a color is array{0: float, 1: float, 2: float} in 0-255.
  */
-final class BLT_Color {
+final class Beaver_Light_Color {
 
 	/**
 	 * Parse a CSS color value.

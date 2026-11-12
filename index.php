@@ -2,7 +2,7 @@
 /**
  * Every list view: the blog, archives and search results.
  *
- * @package Beaver_Light_Theme
+ * @package Beaver_Light
  */
 
 defined( 'ABSPATH' ) || exit;
@@ -13,7 +13,7 @@ get_header();
 	<?php get_template_part( 'parts/archive-header' ); ?>
 
 	<?php if ( have_posts() ) : ?>
-		<?php BLT_Hooks::fire( 'blt_loop_before' ); ?>
+		<?php Beaver_Light_Hooks::fire( 'beaver_light_loop_before' ); ?>
 		<div class="blt-loop">
 			<?php
 			while ( have_posts() ) :
@@ -22,12 +22,12 @@ get_header();
 			endwhile;
 			?>
 		</div>
-		<?php BLT_Hooks::fire( 'blt_loop_after' ); ?>
+		<?php Beaver_Light_Hooks::fire( 'beaver_light_loop_after' ); ?>
 		<?php
 		the_posts_pagination(
 			array(
-				'prev_text' => esc_html__( 'Newer', 'beaver-light-theme' ),
-				'next_text' => esc_html__( 'Older', 'beaver-light-theme' ),
+				'prev_text' => esc_html__( 'Newer', 'beaver-light' ),
+				'next_text' => esc_html__( 'Older', 'beaver-light' ),
 			)
 		);
 		?>

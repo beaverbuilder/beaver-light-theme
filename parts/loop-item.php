@@ -2,12 +2,12 @@
 /**
  * One post in an archive loop.
  *
- * @package Beaver_Light_Theme
+ * @package Beaver_Light
  */
 
 defined( 'ABSPATH' ) || exit;
 
-BLT_Hooks::fire( 'blt_entry_before' );
+Beaver_Light_Hooks::fire( 'beaver_light_entry_before' );
 ?>
 <article <?php post_class( 'blt-loop-item' ); ?>>
 	<?php if ( has_post_thumbnail() ) : ?>
@@ -15,11 +15,11 @@ BLT_Hooks::fire( 'blt_entry_before' );
 	<?php endif; ?>
 	<div class="blt-loop-item__body">
 		<h2 class="blt-loop-item__title"><a href="<?php the_permalink(); ?>"><?php the_title(); ?></a></h2>
-		<?php BLT_Hooks::fire( 'blt_entry_meta_open' ); ?>
-		<?php blt_entry_meta(); ?>
-		<?php BLT_Hooks::fire( 'blt_entry_meta_close' ); ?>
+		<?php Beaver_Light_Hooks::fire( 'beaver_light_entry_meta_open' ); ?>
+		<?php beaver_light_entry_meta(); ?>
+		<?php Beaver_Light_Hooks::fire( 'beaver_light_entry_meta_close' ); ?>
 		<div class="blt-loop-item__excerpt"><?php the_excerpt(); ?></div>
 	</div>
 </article>
 <?php
-BLT_Hooks::fire( 'blt_entry_after' );
+Beaver_Light_Hooks::fire( 'beaver_light_entry_after' );

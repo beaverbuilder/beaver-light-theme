@@ -1,6 +1,6 @@
 <?xml version="1.0"?>
-<ruleset name="Beaver Light Theme">
-	<description>WordPress-Extra and PHP compatibility for Beaver Light Theme.</description>
+<ruleset name="Beaver Light">
+	<description>WordPress-Extra and PHP compatibility for Beaver Light.</description>
 
 	<file>.</file>
 	<exclude-pattern>/vendor/*</exclude-pattern>
@@ -21,20 +21,16 @@
 	<rule ref="WordPress.WP.I18n">
 		<properties>
 			<property name="text_domain" type="array">
-				<element value="beaver-light-theme"/>
+				<element value="beaver-light"/>
 			</property>
 		</properties>
 	</rule>
 	<rule ref="WordPress.NamingConventions.PrefixAllGlobals">
 		<properties>
 			<property name="prefixes" type="array">
-				<element value="blt"/>
-				<element value="BLT"/>
+				<element value="beaver_light"/>
+				<element value="Beaver_Light"/>
 			</property>
 		</properties>
-	</rule>
-	<!-- The prefix is three letters and the sniff asks for four. Whether to keep it is #5; every global must still carry it. -->
-	<rule ref="WordPress.NamingConventions.PrefixAllGlobals.ShortPrefixPassed">
-		<severity>0</severity>
 	</rule>
 </ruleset>

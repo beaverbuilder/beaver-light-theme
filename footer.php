@@ -4,25 +4,25 @@
  *
  * Mirrors header.php; hook order here is API.
  *
- * @package Beaver_Light_Theme
+ * @package Beaver_Light
  */
 
 defined( 'ABSPATH' ) || exit;
 ?>
-		<?php BLT_Hooks::fire( 'blt_content_close' ); ?>
+		<?php Beaver_Light_Hooks::fire( 'beaver_light_content_close' ); ?>
 	</main>
-	<?php BLT_Hooks::fire( 'blt_content_after' ); ?>
+	<?php Beaver_Light_Hooks::fire( 'beaver_light_content_after' ); ?>
 
-	<?php if ( BLT_Chrome::show_header_footer() ) : ?>
-		<?php BLT_Hooks::fire( 'blt_footer_before' ); ?>
+	<?php if ( Beaver_Light_Chrome::show_header_footer() ) : ?>
+		<?php Beaver_Light_Hooks::fire( 'beaver_light_footer_before' ); ?>
 		<?php
 		// Native footer renders here; Themer swaps the callback when a footer layout applies.
-		do_action( 'blt_footer' );
+		do_action( 'beaver_light_footer' );
 		?>
-		<?php BLT_Hooks::fire( 'blt_footer_after' ); ?>
+		<?php Beaver_Light_Hooks::fire( 'beaver_light_footer_after' ); ?>
 	<?php endif; ?>
 
-	<?php BLT_Hooks::fire( 'blt_page_close' ); ?>
+	<?php Beaver_Light_Hooks::fire( 'beaver_light_page_close' ); ?>
 </div>
 <?php wp_footer(); ?>
 </body>

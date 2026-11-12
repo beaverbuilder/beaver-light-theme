@@ -6,7 +6,7 @@
  * DesignSystemPostType::get_default(), the site-wide loading filter and the
  * .fl-ds-page scope class its typography floor targets.
  *
- * @package Beaver_Light_Theme
+ * @package Beaver_Light
  */
 
 defined( 'ABSPATH' ) || exit;
@@ -14,7 +14,7 @@ defined( 'ABSPATH' ) || exit;
 /**
  * Design system hookup.
  */
-final class BLT_Design_System {
+final class Beaver_Light_Design_System {
 
 	/**
 	 * The design system plugin's post type class.

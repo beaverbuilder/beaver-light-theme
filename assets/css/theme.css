@@ -1,7 +1,8 @@
 /**
- * Beaver Light Theme: base, layout and native content.
+ * Beaver Light: base, layout and native content.
  *
- * Every value is a --blt-* property resolved by PHP (BLT_Styles::bridge_css).
+ * Every value is a --blt-* property resolved by PHP
+ * (Beaver_Light_Styles::bridge_css).
  * Everything sits in cascade layers, so any unlayered CSS (Beaver Builder,
  * Global Styles, a design system, a child theme, Additional CSS) wins without
  * a specificity fight.

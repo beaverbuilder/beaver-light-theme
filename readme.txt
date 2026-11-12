@@ -1,4 +1,4 @@
-=== Beaver Light Theme ===
+=== Beaver Light ===
 Contributors: beaverbuilder
 Requires at least: 6.6
 Tested up to: 6.9
@@ -11,7 +11,7 @@ A lightweight theme built for Beaver Builder. Finished out of the box, out of th
 
 == Description ==
 
-Beaver Light Theme (BLT) keeps a new site from looking broken before you style it: a plain, readable blog, single posts, search, archives, a 404 page and comments in system fonts on white, with no plugins required.
+Beaver Light (BLT) keeps a new site from looking broken before you style it: a plain, readable blog, single posts, search, archives, a 404 page and comments in system fonts on white, with no plugins required.
 
 Style the site with Beaver Builder Global Styles or a Beaver Builder AI design system, and your fonts, colors and widths flow into the blog, archives and the built-in header and footer, one value at a time.
 
@@ -30,11 +30,11 @@ Use Beaver Builder Global Styles or a Beaver Builder AI design system. Without B
 
 = Can I remove the header and footer? =
 
-Use the No Header/Footer page template, or `add_filter( 'blt_header_footer', '__return_false' );` site-wide.
+Use the No Header/Footer page template, or `add_filter( 'beaver_light_header_footer', '__return_false' );` site-wide.
 
 == Copyright ==
 
-Beaver Light Theme, (C) 2026 The Beaver Builder Team. GPLv2 or later.
+Beaver Light, (C) 2026 The Beaver Builder Team. GPLv2 or later.
 
 The BLT mascot (assets/images) is by Robby McCullough. Its license must be confirmed as GPL-compatible before a WordPress.org release.
 
