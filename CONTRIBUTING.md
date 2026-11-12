@@ -39,7 +39,7 @@ Pull requests run three checks: `Lint` (PHP lint on 7.4 to 8.4, then PHPCS with 
 - `composer test` for PHPUnit. It needs a local MySQL and a throwaway database, since the suite drops its tables. Set `WP_CORE_DIR` to a WordPress download that matches the installed `wp-phpunit/wp-phpunit` version, and `WP_TESTS_DB_NAME`, `WP_TESTS_DB_USER`, `WP_TESTS_DB_PASSWORD` and `WP_TESTS_DB_HOST` if the defaults in `tests/wp-tests-config.php` do not fit.
 - `.github/scripts/build-zip.sh` builds the release zip from `HEAD` into `build/` and checks what it contains. Uncommitted changes are not in it. `php .github/scripts/check-metadata.php <theme folder>` checks the versions and requirements agree.
 
-Theme Check prints recommendations that do not fail the check. These stay unfixed on purpose, because the principles above rule them out: widget areas, `custom-header` and `custom-background` (no settings), `register_block_style` and `wp-block-styles` (one plain look, and core's block theme styles load unlayered), and `register_block_pattern` (styling and layout come from Beaver Builder). Fix any other recommendation it prints.
+Theme Check prints recommendations that do not fail the check. These stay unfixed on purpose: widget areas (the layout is one column, and the header and footer come from menus or Beaver Themer), `custom-header` and `custom-background` (no settings), `register_block_style` and `wp-block-styles` (one plain look, and core's block theme styles load unlayered), and `register_block_pattern` (styling and layout come from Beaver Builder). Fix any other recommendation it prints.
 
 The tooling, tests and workflows are development files: the zip leaves them out (see `.gitattributes`), and `AGENTS.md` ships.
 
