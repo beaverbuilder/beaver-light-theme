@@ -79,6 +79,7 @@
 		}
 
 		.blt-menu li:is(:hover, :focus-within) > .sub-menu { opacity: 1; visibility: visible; }
+		.blt-menu li.is-dismissed > .sub-menu { opacity: 0; visibility: hidden; }
 	}
 
 	@media (max-width: 767px) {
