@@ -1,0 +1,17 @@
+{
+	"--ds-color-ground": "#F5F7FA",
+	"--ds-color-elevated": "#FFFFFF",
+	"--ds-color-panel": "#E9EDF3",
+	"--ds-color-text": "#16222F",
+	"--ds-color-ink-deep": "#0C141D",
+	"--ds-color-accent": "#2459C9",
+	"--ds-color-accent-deep": "#1A4396",
+	"--ds-color-accent-light": "#6C97EE",
+	"--ds-color-on-accent": "#FFFFFF",
+	"--ds-color-ok": "#1D7550",
+	"--ds-color-ok-bg": "#E0F0E8",
+	"--ds-color-warn": "#86560F",
+	"--ds-color-fail": "#A83129",
+	"--ds-color-fail-bg": "#F5E1DF",
+	"--ds-color-text-25": "rgba(22,34,47,0.24)"
+}

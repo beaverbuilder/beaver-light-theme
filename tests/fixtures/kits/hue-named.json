@@ -1,0 +1,13 @@
+{
+	"--ds-color-white": "#ffffff",
+	"--ds-color-cream": "#F8F5EF",
+	"--ds-color-cream-mid": "#EEE8DE",
+	"--ds-color-pine": "#105A4A",
+	"--ds-color-pine-deep": "#0B4236",
+	"--ds-color-pine-light": "#2A9C82",
+	"--ds-color-saffron": "#F2A93B",
+	"--ds-color-saffron-dark": "#D98F24",
+	"--ds-color-brick": "#7A2E1C",
+	"--ds-color-text": "#38424C",
+	"--ds-color-text-light": "#5C6670"
+}

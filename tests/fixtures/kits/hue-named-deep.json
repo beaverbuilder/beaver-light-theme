@@ -1,0 +1,12 @@
+{
+	"--ds-color-white": "#ffffff",
+	"--ds-color-ivory": "#FAF7F0",
+	"--ds-color-plum": "#120C1C",
+	"--ds-color-plum-mid": "#1B1429",
+	"--ds-color-plum-light": "#2A2138",
+	"--ds-color-brass": "#C7A253",
+	"--ds-color-brass-light": "#E0C88E",
+	"--ds-color-text-dark": "#1C1A2A",
+	"--ds-color-text-muted": "#8B8AA0",
+	"--ds-color-white-20": "rgba(255,255,255,0.20)"
+}

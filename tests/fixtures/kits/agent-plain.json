@@ -1,0 +1,10 @@
+{
+	"--ds-color-canvas": "#FCFCFB",
+	"--ds-color-mist": "#D5D8DC",
+	"--ds-color-slate": "#5E6670",
+	"--ds-color-charcoal": "#1E2328",
+	"--ds-color-brand": "#0B6E4F",
+	"--ds-color-brand-strong": "#08533B",
+	"--ds-color-brand-soft": "#CDEBDF",
+	"--ds-system-spacing": "8px"
+}
