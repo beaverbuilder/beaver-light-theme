@@ -85,7 +85,8 @@
 	.blt-prose :is(h5, h6) { font-size: 1em; }
 
 	.blt-prose > :first-child { margin-top: 0; }
-	.blt-prose :is(p, ul, ol, blockquote, figure, pre, table, .wp-block-buttons) { margin: 0 0 1.25em; }
+	.blt-prose :is(p, ul, ol, blockquote, figure, pre, table) { margin: 0 0 1.25em; }
+	.blt-prose .wp-block-buttons { margin: 0 0 1.25em; }
 
 	:where(.blt-prose, .blt-archive, .blt-entry, .blt-404, .blt-comments) a {
 		color: var(--blt-link);
