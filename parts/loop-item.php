@@ -14,7 +14,15 @@ Beaver_Light_Hooks::fire( 'beaver_light_entry_before' );
 		<a class="blt-loop-item__thumb" href="<?php the_permalink(); ?>" tabindex="-1" aria-hidden="true"><?php the_post_thumbnail( 'medium_large' ); ?></a>
 	<?php endif; ?>
 	<div class="blt-loop-item__body">
-		<h2 class="blt-loop-item__title"><a href="<?php the_permalink(); ?>"><?php the_title(); ?></a></h2>
+		<h2 class="blt-loop-item__title">
+			<?php
+			// Core's own condition for the sticky class, whose border is otherwise the only sign of a sticky post.
+			if ( is_sticky() && is_home() && ! is_paged() ) :
+				?>
+				<span class="screen-reader-text"><?php esc_html_e( 'Featured:', 'beaver-light' ); ?></span>
+			<?php endif; ?>
+			<a href="<?php the_permalink(); ?>"><?php the_title(); ?></a>
+		</h2>
 		<?php Beaver_Light_Hooks::fire( 'beaver_light_entry_meta_open' ); ?>
 		<?php beaver_light_entry_meta(); ?>
 		<?php Beaver_Light_Hooks::fire( 'beaver_light_entry_meta_close' ); ?>
