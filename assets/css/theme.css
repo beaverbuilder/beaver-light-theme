@@ -64,6 +64,11 @@
 }
 
 @layer blt-prose {
+	/* Long words and URLs wrap inside the column; anywhere, unlike break-word, also lets a grid or flex track shrink below the word. */
+	:where(.blt-prose, .blt-archive, .blt-entry, .blt-404, .blt-comments) { overflow-wrap: anywhere; }
+	/* The property inherits, so it stops at builder layouts placed in theme hooks and at buttons, which keep their width. */
+	:where(.blt-prose, .blt-archive, .blt-entry, .blt-404, .blt-comments) :where(.fl-builder-content, button) { overflow-wrap: normal; }
+
 	:where(.blt-prose, .blt-archive, .blt-entry, .blt-404, .blt-comments) :is(h1, h2, h3, h4, h5, h6) {
 		color: var(--blt-heading);
 		font-family: var(--blt-font-heading);
@@ -111,7 +116,8 @@
 	.blt-prose pre code { background: none; padding: 0; }
 	.blt-prose hr { border: 0; border-top: 1px solid var(--blt-line); margin: 2.5em 0; }
 	.blt-prose table { border-collapse: collapse; width: 100%; }
-	.blt-prose :is(th, td) { border-bottom: 1px solid var(--blt-line); padding: 0.6em 0.8em; text-align: start; }
+	/* break-word, not anywhere, so a column never narrows below an ordinary word. */
+	.blt-prose :is(th, td) { border-bottom: 1px solid var(--blt-line); overflow-wrap: break-word; padding: 0.6em 0.8em; text-align: start; }
 	.blt-prose img { border-radius: var(--blt-radius); }
 
 	/* Block editor alignments inside the reading measure. */
