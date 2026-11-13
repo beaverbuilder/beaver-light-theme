@@ -25,12 +25,12 @@ final class Beaver_Light_Color_Inference {
 	const VERSION = 2;
 
 	/**
-	 * Option holding the cache key, the inferred roles and the rejected names.
+	 * Option holding the cache key, the inferred roles and the rejected muted names.
 	 */
 	const OPTION = 'beaver_light_color_roles';
 
 	/**
-	 * Request cache: the inferred roles and the rejected names.
+	 * Request cache: the inferred roles and the rejected muted names.
 	 *
 	 * @var array|null
 	 */
@@ -47,20 +47,20 @@ final class Beaver_Light_Color_Inference {
 	}
 
 	/**
-	 * Known names present in the site default but too faint to read, which the bridge leaves out.
+	 * Known muted names present in the site default but too faint to read, which the bridge leaves out.
 	 *
 	 * @since 0.1.0
-	 * @return array Role => token names without the --ds- prefix; empty with no site default.
+	 * @return string[] Token names without the --ds- prefix; empty with no site default.
 	 */
 	public static function rejected(): array {
 		return self::result()['rejected'];
 	}
 
 	/**
-	 * The roles and rejected names for the site default, from the request cache, the stored option or a fresh pass.
+	 * The roles and rejected muted names for the site default, from the request cache, the stored option or a fresh pass.
 	 *
 	 * @since 0.1.0
-	 * @return array{roles: array, rejected: array}
+	 * @return array{roles: array, rejected: string[]}
 	 */
 	private static function result(): array {
 		if ( null !== self::$result ) {
@@ -117,7 +117,7 @@ final class Beaver_Light_Color_Inference {
 	 *
 	 * @since 0.1.0
 	 * @param array $tokens Custom property name => stored value.
-	 * @return array{roles: array, rejected: array} Role => token name for inferred roles; role => rejected names.
+	 * @return array{roles: array, rejected: string[]} Role => token name for inferred roles; the rejected muted names.
 	 */
 	public static function evaluate( array $tokens ): array {
 		$colors = Beaver_Light_Design_Tokens::colors( $tokens );

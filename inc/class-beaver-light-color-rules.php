@@ -84,18 +84,18 @@ final class Beaver_Light_Color_Rules {
 	 *
 	 * @since 0.1.0
 	 * @param string[] $muted_names Known muted names present, in listed order.
-	 * @return array{roles: array, rejected: array} Role => token name for inferred roles; role => rejected names.
+	 * @return array{roles: array, rejected: string[]} Role => token name for inferred roles; the rejected muted names.
 	 */
 	public function infer( array $muted_names ): array {
 		$seeds = $this->roles;
 
-		// Every other check measures against surface and text, so without both nothing is inferred or rejected.
+		// Every other check measures against surface and text, so without both nothing is inferred; a named surface still rejects.
 		if ( ! $this->infer_surface_and_text() ) {
-			return self::NONE;
+			return array( 'rejected' => $this->palette->faint( $muted_names, $seeds['surface'] ?? '', self::TEXT_CONTRAST ) ) + self::NONE;
 		}
 
-		$faint = $this->palette->faint( $muted_names, $this->roles['surface'], self::TEXT_CONTRAST );
-		$seeds = $this->seed_muted( $seeds, array_values( array_diff( $muted_names, $faint ) ) );
+		$rejected = $this->palette->faint( $muted_names, $this->roles['surface'], self::TEXT_CONTRAST );
+		$seeds    = $this->seed_muted( $seeds, array_values( array_diff( $muted_names, $rejected ) ) );
 		$this->fill( 'heading', $this->roles['text'] );
 		$this->fill( 'muted', $this->pick_muted() );
 		$this->fill( 'line', $this->pick_line() );
@@ -112,7 +112,7 @@ final class Beaver_Light_Color_Rules {
 
 		return array(
 			'roles'    => array_diff_key( $this->roles, $seeds ),
-			'rejected' => array() === $faint ? array() : array( 'muted' => $faint ),
+			'rejected' => $rejected,
 		);
 	}
 

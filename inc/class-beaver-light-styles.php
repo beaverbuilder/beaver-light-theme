@@ -95,7 +95,7 @@ final class Beaver_Light_Styles {
 
 		foreach ( self::roles() as $role => $def ) {
 			$fallback = $global_styles[ $role ] ?? $def[1];
-			$skip     = is_array( $rejected[ $role ] ?? null ) ? array_filter( $rejected[ $role ], 'is_string' ) : array();
+			$skip     = 'muted' === $role ? array_filter( $rejected, 'is_string' ) : array();
 			$tokens   = array_values( array_diff( $def[0], $skip ) );
 
 			// An inferred name comes from a stored option, so only a plain token name is printed.

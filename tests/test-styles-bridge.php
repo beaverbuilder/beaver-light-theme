@@ -221,6 +221,39 @@ class Test_Styles_Bridge extends Beaver_Light_Test_Case {
 	}
 
 	/**
+	 * A rejected muted name gives way to a token picked by value, after the remaining listed name.
+	 */
+	public function test_rejected_muted_name_gives_way_to_inferred() {
+		self::set_default_design_system( self::factory()->post->create_and_get() );
+		DesignSystemPostType::$tokens = array(
+			'--ds-color-surface' => '#ffffff',
+			'--ds-color-text'    => '#1f2328',
+			'--ds-color-muted'   => '#e0e0e0',
+			'--ds-color-slate'   => '#59606b',
+		);
+
+		$this->assertStringContainsString( '--blt-muted: var(--ds-color-text-muted, var(--ds-color-slate, #59606b));', Beaver_Light_Styles::bridge_css() );
+	}
+
+	/**
+	 * Rejected names stored for the current revision are applied without a fresh pass.
+	 */
+	public function test_stored_rejection_is_applied() {
+		$post = self::factory()->post->create_and_get();
+		self::set_default_design_system( $post );
+		update_option(
+			'beaver_light_color_roles',
+			array(
+				'key'      => Beaver_Light_Color_Inference::cache_key( $post ),
+				'roles'    => array(),
+				'rejected' => array( 'color-text-muted' ),
+			)
+		);
+
+		$this->assertStringContainsString( '--blt-muted: var(--ds-color-muted, #59606b);', Beaver_Light_Styles::bridge_css() );
+	}
+
+	/**
 	 * A stored role name that is not a plain token name is never printed, and a malformed rejected name removes nothing.
 	 */
 	public function test_tampered_cache_is_not_printed() {
@@ -235,10 +268,7 @@ class Test_Styles_Bridge extends Beaver_Light_Test_Case {
 					'text'    => array( 'color-x' ),
 					'muted'   => "color-x\n",
 				),
-				'rejected' => array(
-					'muted' => array( array( 'color-muted' ) ),
-					'line'  => 'color-border',
-				),
+				'rejected' => array( array( 'color-muted' ), 'color-border' ),
 			)
 		);
 
