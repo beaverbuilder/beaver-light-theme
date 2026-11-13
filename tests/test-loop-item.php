@@ -8,7 +8,9 @@
 /**
  * A sticky post on the blog home carries a label for screen readers.
  */
-class Test_Loop_Item extends WP_UnitTestCase {
+class Test_Loop_Item extends Beaver_Light_Test_Case {
+
+	const LABEL = '#<h2 class="blt-loop-item__title">\\s*<span class="screen-reader-text">Featured:</span>#';
 
 	/**
 	 * Render the loop item for one post from the main query.
@@ -44,7 +46,7 @@ class Test_Loop_Item extends WP_UnitTestCase {
 		stick_post( $post_id );
 		$this->go_to( home_url( '/' ) );
 
-		$this->assertStringContainsString( 'Featured:', $this->render_loop_item( $post_id ) );
+		$this->assertMatchesRegularExpression( self::LABEL, $this->render_loop_item( $post_id ) );
 	}
 
 	/**
@@ -65,6 +67,19 @@ class Test_Loop_Item extends WP_UnitTestCase {
 		$post_id     = self::factory()->post->create( array( 'post_category' => array( $category_id ) ) );
 		stick_post( $post_id );
 		$this->go_to( get_category_link( $category_id ) );
+
+		$this->assertStringNotContainsString( 'Featured:', $this->render_loop_item( $post_id ) );
+	}
+
+	/**
+	 * Past the first page of the blog home a sticky post has no sticky border, so it carries no label.
+	 */
+	public function test_sticky_post_on_later_home_page_is_not_labeled() {
+		$per_page = (int) get_option( 'posts_per_page' );
+		$post_id  = self::factory()->post->create( array( 'post_date' => '2000-01-01 00:00:00' ) );
+		self::factory()->post->create_many( $per_page );
+		stick_post( $post_id );
+		$this->go_to( add_query_arg( 'paged', 2, home_url( '/' ) ) );
 
 		$this->assertStringNotContainsString( 'Featured:', $this->render_loop_item( $post_id ) );
 	}

@@ -17,10 +17,11 @@ Beaver_Light_Hooks::fire( 'beaver_light_entry_before' );
 		<h2 class="blt-loop-item__title">
 			<?php
 			// Core's own condition for the sticky class, whose border is otherwise the only sign of a sticky post.
-			if ( is_sticky() && is_home() && ! is_paged() ) :
-				?>
-				<span class="screen-reader-text"><?php esc_html_e( 'Featured:', 'beaver-light' ); ?></span>
-			<?php endif; ?>
+			if ( is_sticky() && is_home() && ! is_paged() ) {
+				/* translators: Screen reader prefix to a sticky post's title. */
+				printf( '<span class="screen-reader-text">%s</span>', esc_html__( 'Featured:', 'beaver-light' ) );
+			}
+			?>
 			<a href="<?php the_permalink(); ?>"><?php the_title(); ?></a>
 		</h2>
 		<?php Beaver_Light_Hooks::fire( 'beaver_light_entry_meta_open' ); ?>
