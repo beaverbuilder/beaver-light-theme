@@ -5,7 +5,8 @@
  * Every visual value the theme's CSS uses is a --blt-* property, printed once
  * per request. Each role resolves on its own: a design system token wins by
  * mere presence (a known name, else one Beaver_Light_Color_Inference picked from the
- * values), then Global Styles, then the theme default. One look, so
+ * values; a known muted name too faint to read is left out), then Global
+ * Styles, then the theme default. One look, so
  * every change is incremental (see CONTRIBUTING.md).
  *
  * @package Beaver_Light
@@ -80,7 +81,7 @@ final class Beaver_Light_Styles {
 	}
 
 	/**
-	 * The :root block that resolves every role through the chain, with any inferred color token after the listed names.
+	 * The :root block that resolves every role through the chain, without rejected names and with any inferred color token after the listed names.
 	 *
 	 * @since 0.1.0
 	 * @return string
@@ -88,12 +89,14 @@ final class Beaver_Light_Styles {
 	public static function bridge_css(): string {
 		$global_styles = Beaver_Light_Global_Styles::values();
 		$inferred      = Beaver_Light_Color_Inference::roles();
+		$rejected      = Beaver_Light_Color_Inference::rejected();
 		$widths        = self::widths();
 		$lines         = array();
 
 		foreach ( self::roles() as $role => $def ) {
 			$fallback = $global_styles[ $role ] ?? $def[1];
-			$tokens   = $def[0];
+			$skip     = 'muted' === $role ? array_filter( $rejected, 'is_string' ) : array();
+			$tokens   = array_values( array_diff( $def[0], $skip ) );
 
 			// An inferred name comes from a stored option, so only a plain token name is printed.
 			if ( is_string( $inferred[ $role ] ?? null ) && preg_match( Beaver_Light_Design_Tokens::COLOR_NAME, '--ds-' . $inferred[ $role ] ) ) {

@@ -65,6 +65,31 @@ final class Beaver_Light_Color_Palette {
 	}
 
 	/**
+	 * The names measured below a contrast on a ground; an unmeasurable name or ground cannot be checked, so it is never faint.
+	 *
+	 * @since 0.1.0
+	 * @param string[] $names  Token names.
+	 * @param string   $ground Token name of the ground.
+	 * @param float    $min    Minimum contrast.
+	 * @return string[]
+	 */
+	public function faint( array $names, string $ground, float $min ): array {
+		$faint = array();
+
+		if ( ! isset( $this->colors[ $ground ] ) ) {
+			return $faint;
+		}
+
+		foreach ( $names as $name ) {
+			if ( isset( $this->colors[ $name ] ) && $this->ratio( $name, $ground ) < $min ) {
+				$faint[] = $name;
+			}
+		}
+
+		return $faint;
+	}
+
+	/**
 	 * Contrast between two tokens, 0 when either cannot be measured.
 	 *
 	 * @since 0.1.0

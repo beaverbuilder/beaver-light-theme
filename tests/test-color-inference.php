@@ -30,7 +30,7 @@ class Test_Color_Inference extends Beaver_Light_Test_Case {
 	}
 
 	/**
-	 * Every role inference commits passes its contrast check, and no name-matched role is overridden.
+	 * Every role inference commits passes its contrast check, no name-matched role is overridden, and a measurable muted name left in passes text contrast.
 	 *
 	 * @dataProvider data_fixtures
 	 *
@@ -40,13 +40,20 @@ class Test_Color_Inference extends Beaver_Light_Test_Case {
 		$tokens   = self::fixture( $fixture );
 		$colors   = Beaver_Light_Design_Tokens::colors( $tokens );
 		$seeds    = Beaver_Light_Color_Inference::seeds( array_keys( $colors ) );
-		$inferred = Beaver_Light_Color_Inference::infer( $tokens );
+		$result   = Beaver_Light_Color_Inference::evaluate( $tokens );
+		$inferred = $result['roles'];
 		$roles    = $seeds + $inferred;
 		$ratio    = static function ( string $a, string $b ) use ( $roles, $colors ): float {
 			return Beaver_Light_Color::contrast( $colors[ $roles[ $a ] ], $colors[ $roles[ $b ] ] );
 		};
 
 		$this->assertSame( array(), array_intersect_key( $inferred, $seeds ) );
+
+		$kept = array_values( array_diff( array_intersect( Beaver_Light_Styles::roles()['muted'][0], array_keys( $colors ) ), $result['rejected'] ) );
+
+		if ( isset( $kept[0], $colors[ $kept[0] ], $roles['surface'], $colors[ $roles['surface'] ] ) ) {
+			$this->assertGreaterThanOrEqual( 4.5, Beaver_Light_Color::contrast( $colors[ $kept[0] ], $colors[ $roles['surface'] ] ) );
+		}
 
 		if ( array() === $inferred ) {
 			return;
