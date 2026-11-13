@@ -20,6 +20,8 @@ body {
 	-webkit-font-smoothing: antialiased;
 }
 
+button { overflow-wrap: normal; }
+
 :is(h1, h2, h3, h4, h5, h6) {
 	color: var(--blt-heading);
 	font-family: var(--blt-font-heading);
