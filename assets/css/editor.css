@@ -16,6 +16,7 @@ body {
 	font-family: var(--blt-font-body);
 	font-size: var(--blt-font-size);
 	line-height: 1.65;
+	overflow-wrap: anywhere;
 	-webkit-font-smoothing: antialiased;
 }
 
