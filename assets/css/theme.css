@@ -177,7 +177,7 @@
 	.blt-loop-item { border-top: 1px solid var(--blt-line); display: grid; gap: 1.25rem; padding-block: 2rem; }
 	.blt-loop-item:first-child { border-top: 0; padding-top: 0; }
 	.blt-loop-item__thumb img { border-radius: var(--blt-radius); display: block; }
-	.blt-loop-item__title { font-size: clamp(1.375rem, 1.1rem + 1vw, 1.75rem); margin: 0 0 0.3em; }
+	.blt-loop-item__title { margin: 0 0 0.3em; }
 	.blt-loop-item__title a { color: var(--blt-heading); text-decoration: none; }
 	.blt-loop-item__title a:hover { color: var(--blt-link-hover); }
 	.blt-loop-item__excerpt p { margin: 0.75em 0 0; }
@@ -206,6 +206,16 @@
 	.blt-comment-list .avatar { border-radius: 50%; float: left; margin-right: 0.75rem; }
 	.blt-comment-list .comment-metadata { color: var(--blt-muted); font-size: 0.8125rem; }
 	.blt-comment-list .bypostauthor > .comment-body { border-left: 3px solid var(--blt-primary); padding-left: 1rem; }
+
+	/* A design system's typography floor sizes .fl-ds-page h2 as clamp(--ds-text-2xl, 4.5vw, --ds-text-4xl) and h3 as clamp(--ds-text-xl, 4vw, --ds-text-3xl), unlayered, so these titles set those tokens to their own size (the comment headings to the browser's default) to stay below the page title. */
+	.blt-loop-item__title {
+		--ds-text-2xl: clamp(1.375rem, 1.1rem + 1vw, 1.75rem);
+		--ds-text-4xl: clamp(1.375rem, 1.1rem + 1vw, 1.75rem);
+		font-size: clamp(1.375rem, 1.1rem + 1vw, 1.75rem);
+	}
+
+	.blt-comments__title { --ds-text-2xl: 1.5em; --ds-text-4xl: 1.5em; }
+	.blt-comments .comment-reply-title { --ds-text-xl: 1.17em; --ds-text-3xl: 1.17em; }
 
 	.blt-404 { text-align: center; }
 	.blt-404 .search-form { margin: 0 auto 1.25em; }
