@@ -114,9 +114,16 @@
 	.blt-prose :is(th, td) { border-bottom: 1px solid var(--blt-line); padding: 0.6em 0.8em; text-align: start; }
 	.blt-prose img { border-radius: var(--blt-radius); }
 
-	/* Block editor alignments inside the reading measure. */
-	.blt-prose .alignwide { margin-inline: calc(50% - min(50vw, var(--blt-site-width) / 2) + var(--blt-gutter)); }
-	.blt-prose .alignfull { margin-inline: calc(50% - 50vw); max-width: 100vw; }
+	/* Block editor alignments inside the reading measure: wide and full break out by width and offset, not margin, which core's unlayered :where(figure) margin would override. */
+	.blt-prose .alignwide {
+		inset-inline-start: calc(50% - min(50vw, var(--blt-site-width) / 2) + var(--blt-gutter));
+		position: relative;
+		width: calc(min(100vw, var(--blt-site-width)) - 2 * var(--blt-gutter));
+	}
+
+	.blt-prose .alignfull { inset-inline-start: calc(50% - 50vw); position: relative; width: 100vw; }
+	/* A constrained Group already sizes and places its wide and full children with core's unlayered layout margins and max-widths. */
+	.blt-prose .is-layout-constrained > :is(.alignwide, .alignfull) { inset-inline-start: auto; width: auto; }
 	.blt-prose .aligncenter { margin-inline: auto; }
 
 	/* Classic editor floats and captions: a classic float caps at half the column for narrow screens, and a block clearfix contains floats yet lets the last margin collapse. */
