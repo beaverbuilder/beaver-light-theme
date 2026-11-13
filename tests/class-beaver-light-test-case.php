@@ -50,7 +50,7 @@ abstract class Beaver_Light_Test_Case extends WP_UnitTestCase {
 
 		// The request caches live for one request, and each test is a new request.
 		self::clear_request_cache( 'Beaver_Light_Global_Styles', 'values' );
-		self::clear_request_cache( 'Beaver_Light_Color_Inference', 'roles' );
+		self::clear_request_cache( 'Beaver_Light_Color_Inference', 'result' );
 	}
 
 	/**

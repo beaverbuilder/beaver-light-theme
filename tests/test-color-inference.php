@@ -30,7 +30,7 @@ class Test_Color_Inference extends Beaver_Light_Test_Case {
 	}
 
 	/**
-	 * Every role inference commits passes its contrast check, and no name-matched role is overridden.
+	 * Every role inference commits passes its contrast check, no name-matched role is overridden, and a measurable muted name left in passes text contrast.
 	 *
 	 * @dataProvider data_fixtures
 	 *
@@ -40,13 +40,18 @@ class Test_Color_Inference extends Beaver_Light_Test_Case {
 		$tokens   = self::fixture( $fixture );
 		$colors   = Beaver_Light_Design_Tokens::colors( $tokens );
 		$seeds    = Beaver_Light_Color_Inference::seeds( array_keys( $colors ) );
-		$inferred = Beaver_Light_Color_Inference::infer( $tokens );
+		$result   = Beaver_Light_Color_Inference::evaluate( $tokens );
+		$inferred = $result['roles'];
 		$roles    = $seeds + $inferred;
 		$ratio    = static function ( string $a, string $b ) use ( $roles, $colors ): float {
 			return Beaver_Light_Color::contrast( $colors[ $roles[ $a ] ], $colors[ $roles[ $b ] ] );
 		};
 
 		$this->assertSame( array(), array_intersect_key( $inferred, $seeds ) );
+
+		if ( isset( $seeds['muted'], $colors[ $seeds['muted'] ] ) && ! in_array( $seeds['muted'], $result['rejected']['muted'] ?? array(), true ) ) {
+			$this->assertGreaterThanOrEqual( 4.5, $ratio( 'muted', 'surface' ) );
+		}
 
 		if ( array() === $inferred ) {
 			return;
@@ -214,6 +219,94 @@ class Test_Color_Inference extends Beaver_Light_Test_Case {
 		$tokens = self::fixture( 'agent-plain' ) + array( '--ds-color-surface' => 'oklch(98% 0 0)' );
 
 		$this->assertSame( array(), Beaver_Light_Color_Inference::infer( $tokens ) );
+	}
+
+	/**
+	 * A known muted name below text contrast on the surface is rejected, and muted falls through when no color qualifies.
+	 */
+	public function test_faint_muted_name_is_rejected() {
+		$result = Beaver_Light_Color_Inference::evaluate(
+			array(
+				'--ds-color-surface' => '#ffffff',
+				'--ds-color-text'    => '#1f2328',
+				'--ds-color-muted'   => '#e0e0e0',
+			)
+		);
+
+		$this->assertSame( array( 'muted' => array( 'color-muted' ) ), $result['rejected'] );
+		$this->assertArrayNotHasKey( 'muted', $result['roles'] );
+	}
+
+	/**
+	 * A rejected muted name leaves the role open for a token picked by value.
+	 */
+	public function test_rejected_muted_is_inferred() {
+		$result = Beaver_Light_Color_Inference::evaluate(
+			array(
+				'--ds-color-surface' => '#ffffff',
+				'--ds-color-text'    => '#1f2328',
+				'--ds-color-muted'   => '#e0e0e0',
+				'--ds-color-slate'   => '#59606b',
+			)
+		);
+
+		$this->assertSame( array( 'muted' => array( 'color-muted' ) ), $result['rejected'] );
+		$this->assertSame( 'color-slate', $result['roles']['muted'] );
+	}
+
+	/**
+	 * A legible muted name after a faint one stays the match, so nothing is inferred over it.
+	 */
+	public function test_next_legible_muted_name_stays_matched() {
+		$result = Beaver_Light_Color_Inference::evaluate(
+			array(
+				'--ds-color-surface'    => '#ffffff',
+				'--ds-color-text'       => '#1f2328',
+				'--ds-color-text-muted' => '#e0e0e0',
+				'--ds-color-muted'      => '#59606b',
+				'--ds-color-slate'      => '#5f6670',
+			)
+		);
+
+		$this->assertSame( array( 'muted' => array( 'color-text-muted' ) ), $result['rejected'] );
+		$this->assertArrayNotHasKey( 'muted', $result['roles'] );
+	}
+
+	/**
+	 * A legible or unmeasurable muted name is kept, and nothing is rejected when surface and text cannot be set.
+	 *
+	 * @return array
+	 */
+	public function data_muted_name_kept() {
+		return array(
+			'legible'      => array( array( '--ds-color-muted' => '#59606b' ) ),
+			'unmeasurable' => array( array( '--ds-color-muted' => 'oklch(90% 0 0)' ) ),
+			'no text pair' => array(
+				array(
+					'--ds-color-text'  => '#ffffff',
+					'--ds-color-muted' => '#e0e0e0',
+				),
+			),
+		);
+	}
+
+	/**
+	 * Only a measurable known muted name that fails text contrast is rejected.
+	 *
+	 * @dataProvider data_muted_name_kept
+	 *
+	 * @param array $tokens Tokens added to a white surface and dark text.
+	 */
+	public function test_muted_name_kept( array $tokens ) {
+		$result = Beaver_Light_Color_Inference::evaluate(
+			$tokens + array(
+				'--ds-color-surface' => '#ffffff',
+				'--ds-color-text'    => '#1f2328',
+			)
+		);
+
+		$this->assertSame( array(), $result['rejected'] );
+		$this->assertArrayNotHasKey( 'muted', $result['roles'] );
 	}
 
 	/**

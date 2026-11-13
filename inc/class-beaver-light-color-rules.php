@@ -3,8 +3,9 @@
  * The value-based rules that pick a color token for each unmatched role.
  *
  * A wrong guess is worse than no guess, so a role commits only when its
- * contrast checks pass; otherwise it is left out and falls through to Global
- * Styles and then the theme default.
+ * contrast checks pass, and a known muted name, which some systems give to a
+ * background tone, must pass the text check too; otherwise it falls through to
+ * Global Styles and then the theme default.
  *
  * @package Beaver_Light
  */
@@ -46,6 +47,12 @@ final class Beaver_Light_Color_Rules {
 	/** A gray's hue is meaningless, so it cannot be or match the primary's hue. */
 	const HOVER_MIN_SATURATION = 0.2;
 
+	/** What infer() returns when it can measure nothing. */
+	const NONE = array(
+		'roles'    => array(),
+		'rejected' => array(),
+	);
+
 	/**
 	 * The measurable colors the roles are picked from.
 	 *
@@ -73,19 +80,22 @@ final class Beaver_Light_Color_Rules {
 	}
 
 	/**
-	 * Infer every role the seeds left open.
+	 * Infer every role the seeds left open, after rejecting the known muted names too faint on the surface.
 	 *
 	 * @since 0.1.0
-	 * @return array Role => token name, for inferred roles only.
+	 * @param string[] $muted_names Known muted names present, in listed order.
+	 * @return array{roles: array, rejected: array} Role => token name for inferred roles; role => rejected names.
 	 */
-	public function infer(): array {
+	public function infer( array $muted_names ): array {
 		$seeds = $this->roles;
 
-		// Every other check measures against surface and text, so without both nothing is inferred.
+		// Every other check measures against surface and text, so without both nothing is inferred or rejected.
 		if ( ! $this->infer_surface_and_text() ) {
-			return array();
+			return self::NONE;
 		}
 
+		$faint = $this->palette->faint( $muted_names, $this->roles['surface'], self::TEXT_CONTRAST );
+		$seeds = $this->seed_muted( $seeds, array_values( array_diff( $muted_names, $faint ) ) );
 		$this->fill( 'heading', $this->roles['text'] );
 		$this->fill( 'muted', $this->pick_muted() );
 		$this->fill( 'line', $this->pick_line() );
@@ -100,7 +110,10 @@ final class Beaver_Light_Color_Rules {
 			$this->fill( 'link-hover', $this->roles['primary-hover'] );
 		}
 
-		return array_diff_key( $this->roles, $seeds );
+		return array(
+			'roles'    => array_diff_key( $this->roles, $seeds ),
+			'rejected' => array() === $faint ? array() : array( 'muted' => $faint ),
+		);
 	}
 
 	/**
@@ -126,6 +139,25 @@ final class Beaver_Light_Color_Rules {
 		$this->roles['text']    = $text;
 
 		return true;
+	}
+
+	/**
+	 * Seed muted with the first legible known name, or leave it open for inference.
+	 *
+	 * @since 0.1.0
+	 * @param array    $seeds   Role => token name matched by known names.
+	 * @param string[] $legible Known muted names that passed, in listed order.
+	 * @return array
+	 */
+	private function seed_muted( array $seeds, array $legible ): array {
+		unset( $seeds['muted'], $this->roles['muted'] );
+
+		if ( isset( $legible[0] ) ) {
+			$seeds['muted']       = $legible[0];
+			$this->roles['muted'] = $legible[0];
+		}
+
+		return $seeds;
 	}
 
 	/**
