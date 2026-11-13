@@ -128,6 +128,9 @@
 	/* Core's unlayered :where(figure) margin beats any layered margin, so a floated caption or Image block takes its gap as padding. */
 	.blt-prose :is(.wp-caption, .wp-block-image).alignleft { box-sizing: content-box; padding-right: 1.5em; }
 	.blt-prose :is(.wp-caption, .wp-block-image).alignright { box-sizing: content-box; padding-left: 1.5em; }
+	/* Core sets an Image block's caption as a table-caption that spans the padding too, so it takes the same gap. */
+	.blt-prose .wp-block-image.alignleft > figcaption { padding-right: 1.5em; }
+	.blt-prose .wp-block-image.alignright > figcaption { padding-left: 1.5em; }
 	.blt-prose .wp-caption img { display: block; }
 	.blt-prose :is(.wp-caption-text, .gallery-caption) { color: var(--blt-muted); font-size: 0.875rem; margin-top: 0.5em; }
 }
