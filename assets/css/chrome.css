@@ -83,6 +83,8 @@
 	}
 
 	@media (max-width: 767px) {
+		/* The branding shrinks and wraps its own text, so a long title keeps the toggle on the right of the row. */
+		.blt-branding { flex: 1 1 0; min-width: 0; overflow-wrap: anywhere; }
 		.blt-nav-toggle { display: block; }
 		.blt-nav { display: none; flex-basis: 100%; }
 		.blt-nav.is-open { display: block; }
