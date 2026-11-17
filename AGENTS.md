@@ -10,7 +10,7 @@ Each style value resolves on its own, strongest first:
 2. **Beaver Builder Global Styles.** Text, heading, link and button colors, and body and heading fonts. These also style Beaver Builder content, so they keep the whole site consistent.
 3. **Theme default.**
 
-**Pages with their own design system.** Beaver Builder loads one design system per page, so on a page with its own design system the theme's header and footer take that page's fonts and colors, not the site default's. This is intended. For a different header or footer on such a page, use a Beaver Themer header or footer, or remove both with the No Header/Footer template.
+**Pages with their own design system.** Beaver Builder loads one design system per page, so on a page with its own design system the theme's header and footer take that page's fonts and colors, not the site default's. This is intended. For a different header or footer on such a page, use a Beaver Themer header or footer styled with its own fonts and colors, or remove both with the No Header/Footer template.
 
 On a Beaver Builder site, change the design system or Global Styles first. Use CSS only for touches neither one covers.
 
