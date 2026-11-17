@@ -30,9 +30,11 @@ require BEAVER_LIGHT_DIR . '/inc/class-beaver-light-color-palette.php';
 require BEAVER_LIGHT_DIR . '/inc/class-beaver-light-color-rules.php';
 require BEAVER_LIGHT_DIR . '/inc/class-beaver-light-color-inference.php';
 require BEAVER_LIGHT_DIR . '/inc/class-beaver-light-styles.php';
+require BEAVER_LIGHT_DIR . '/inc/class-beaver-light-customizer.php';
 
 Beaver_Light_Compat_FL::init();
 Beaver_Light_Themer::init();
 Beaver_Light_Chrome::init();
 Beaver_Light_Design_System::init();
 Beaver_Light_Styles::init();
+Beaver_Light_Customizer::init();
