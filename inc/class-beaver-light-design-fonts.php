@@ -17,9 +17,9 @@ defined( 'ABSPATH' ) || exit;
 final class Beaver_Light_Design_Fonts {
 
 	/**
-	 * A font family list: comma-separated names, each bare or wholly quoted, so a stored value cannot break out of a declaration.
+	 * A trimmed font family list: comma-separated names, each bare or wholly quoted, so a stored value cannot break out of a declaration; possessive, so a long value cannot backtrack.
 	 */
-	const FAMILY = '/^\s*(?:"[\w .-]+"|\'[\w .-]+\'|[\w .-]+)\s*(?:,\s*(?:"[\w .-]+"|\'[\w .-]+\'|[\w .-]+)\s*)*$/uD';
+	const FAMILY = '/^(?:"[\w .-]++"\s*+|\'[\w .-]++\'\s*+|[\w .-]++)(?:,\s*+(?:"[\w .-]++"\s*+|\'[\w .-]++\'\s*+|[\w .-]++))*+$/uD';
 
 	/**
 	 * The font roles this resolves (see Beaver_Light_Styles::roles()).
@@ -76,22 +76,22 @@ final class Beaver_Light_Design_Fonts {
 	}
 
 	/**
-	 * The first listed token the map defines, resolved, as CSS picks the first defined var().
+	 * The first listed token that resolves, as CSS skips a var() whose reference is undefined.
 	 *
 	 * @since 0.1.0
 	 * @param string[] $names  Token names without the --ds- prefix.
 	 * @param array    $tokens Custom property name => stored value.
-	 * @return string|null Null when no listed token is defined or the first one is not a family list.
+	 * @return string|null Null when no listed token resolves or the first that does is not a family list.
 	 */
 	private static function resolve_family( array $names, array $tokens ): ?string {
 		foreach ( $names as $name ) {
-			if ( ! isset( $tokens[ '--ds-' . $name ] ) ) {
+			$value = Beaver_Light_Design_Tokens::value( '--ds-' . $name, $tokens );
+
+			if ( null === $value ) {
 				continue;
 			}
 
-			$value = Beaver_Light_Design_Tokens::value( '--ds-' . $name, $tokens );
-
-			return null !== $value && preg_match( self::FAMILY, $value ) ? trim( $value ) : null;
+			return preg_match( self::FAMILY, trim( $value ) ) ? trim( $value ) : null;
 		}
 
 		return null;
@@ -114,7 +114,7 @@ final class Beaver_Light_Design_Fonts {
 			return $theme_json;
 		}
 
-		$fallbacks = Beaver_Light_Styles::fallbacks();
+		$fallbacks = Beaver_Light_Styles::fallbacks( true );
 
 		return $theme_json->update_with(
 			array(

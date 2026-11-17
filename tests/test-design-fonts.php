@@ -73,7 +73,7 @@ class Test_Design_Fonts extends Beaver_Light_Test_Case {
 	}
 
 	/**
-	 * Values that could break out of a declaration are dropped, and an unusable first token is not passed over for a later one.
+	 * Values that could break out of a declaration.
 	 *
 	 * @return array
 	 */
@@ -84,13 +84,13 @@ class Test_Design_Fonts extends Beaver_Light_Test_Case {
 			'mixed quotes'      => array( '"Inter\', sans-serif' ),
 			'style tag'         => array( '</style><script>' ),
 			'function'          => array( 'url(x)' ),
-			'missing reference' => array( 'var(--ds-font-nope)' ),
 			'empty'             => array( '' ),
+			'backtracking'      => array( str_repeat( 'a  ,', 120 ) . '!' ),
 		);
 	}
 
 	/**
-	 * An unsafe or unresolvable body value resolves to nothing.
+	 * An unsafe heading value resolves to nothing, without falling through to the display token, as CSS would use it.
 	 *
 	 * @dataProvider data_unsafe_values
 	 *
@@ -108,16 +108,60 @@ class Test_Design_Fonts extends Beaver_Light_Test_Case {
 	}
 
 	/**
-	 * The design system family sits under its token in the bridge, ahead of Global Styles.
+	 * Surrounding whitespace is trimmed, and a reference's fallback is used when its target is missing.
 	 */
-	public function test_bridge_falls_back_to_design_system_family() {
+	public function test_trims_and_follows_reference_fallback() {
+		$this->with_tokens(
+			array(
+				'--ds-font-body'    => "  Inter , sans-serif\n",
+				'--ds-font-heading' => 'var(--ds-font-nope, Georgia, serif)',
+			)
+		);
+
+		$this->assertSame(
+			array(
+				'font-body'    => 'Inter , sans-serif',
+				'font-heading' => 'Georgia, serif',
+			),
+			Beaver_Light_Design_Fonts::values()
+		);
+	}
+
+	/**
+	 * A token whose reference is undefined is passed over for the next listed one, as CSS does.
+	 */
+	public function test_unresolvable_token_falls_to_next() {
+		$this->with_tokens(
+			array(
+				'--ds-font-heading' => 'var(--ds-font-nope)',
+				'--ds-font-display' => 'Georgia, serif',
+			)
+		);
+
+		$this->assertSame( array( 'font-heading' => 'Georgia, serif' ), Beaver_Light_Design_Fonts::values() );
+	}
+
+	/**
+	 * In the editor bridge, the design system family sits under its token, ahead of Global Styles.
+	 */
+	public function test_editor_bridge_falls_back_to_design_system_family() {
 		FLBuilderGlobalStyles::$settings = (object) array( 'text_typography' => array( 'font_family' => 'Open Sans' ) );
 		$this->with_tokens( array( '--ds-font-body' => 'Inter, sans-serif' ) );
 
-		$css = Beaver_Light_Styles::bridge_css();
+		$css = Beaver_Light_Styles::editor_settings( array() )['styles'][0]['css'];
 
 		$this->assertStringContainsString( '--blt-font-body: var(--ds-font-body, Inter, sans-serif);', $css );
 		$this->assertStringContainsString( '--blt-font-heading: var(--ds-font-heading, var(--ds-font-display, inherit));', $css );
+	}
+
+	/**
+	 * The front-end bridge keeps Global Styles under the token, since a page without the design system's tokens has not loaded its fonts.
+	 */
+	public function test_front_end_bridge_keeps_global_styles() {
+		FLBuilderGlobalStyles::$settings = (object) array( 'text_typography' => array( 'font_family' => 'Open Sans' ) );
+		$this->with_tokens( array( '--ds-font-body' => 'Inter, sans-serif' ) );
+
+		$this->assertStringContainsString( '--blt-font-body: var(--ds-font-body, "Open Sans", sans-serif);', Beaver_Light_Styles::bridge_css() );
 	}
 
 	/**

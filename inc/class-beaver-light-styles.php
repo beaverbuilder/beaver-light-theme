@@ -81,12 +81,13 @@ final class Beaver_Light_Styles {
 	}
 
 	/**
-	 * The value each role falls back to under its tokens: the design system's resolved font family, then Global Styles, then the theme default.
+	 * The value each role falls back to under its tokens: in an editor the design system's resolved font family (a front-end page without its tokens never loaded its fonts), then Global Styles, then the theme default.
 	 *
 	 * @since 0.1.0
+	 * @param bool $in_editor Whether the request renders a block editor or the Style Book.
 	 * @return array Role => CSS value.
 	 */
-	public static function fallbacks(): array {
+	public static function fallbacks( bool $in_editor = false ): array {
 		$defaults = array_map(
 			function ( array $def ): string {
 				return $def[1];
@@ -94,17 +95,20 @@ final class Beaver_Light_Styles {
 			self::roles()
 		);
 
-		return array_merge( $defaults, Beaver_Light_Global_Styles::values(), Beaver_Light_Design_Fonts::values() );
+		$design_fonts = $in_editor ? Beaver_Light_Design_Fonts::values() : array();
+
+		return array_merge( $defaults, Beaver_Light_Global_Styles::values(), $design_fonts );
 	}
 
 	/**
 	 * The :root block that resolves every role through the chain, without rejected names and with any inferred color token after the listed names.
 	 *
 	 * @since 0.1.0
+	 * @param bool $in_editor Whether the request renders a block editor or the Style Book (see fallbacks()).
 	 * @return string
 	 */
-	public static function bridge_css(): string {
-		$fallbacks = self::fallbacks();
+	public static function bridge_css( bool $in_editor = false ): string {
+		$fallbacks = self::fallbacks( $in_editor );
 		$inferred  = Beaver_Light_Color_Inference::roles();
 		$rejected  = Beaver_Light_Color_Inference::rejected();
 		$widths    = self::widths();
@@ -193,7 +197,7 @@ final class Beaver_Light_Styles {
 	 * @return array
 	 */
 	public static function editor_settings( array $settings ): array {
-		$settings['styles'][] = array( 'css' => Beaver_Light_Global_Styles::palette_css() . self::bridge_css() );
+		$settings['styles'][] = array( 'css' => Beaver_Light_Global_Styles::palette_css() . self::bridge_css( true ) );
 
 		return $settings;
 	}
