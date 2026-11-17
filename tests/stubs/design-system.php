@@ -50,3 +50,21 @@ class DesignSystemPostType {
 		return array( 'tokens' => self::$tokens );
 	}
 }
+
+namespace FL\DesignSystem\Admin;
+
+/**
+ * Design Systems admin page locator stand-in.
+ */
+class AdminPageLocator {
+
+	/**
+	 * The admin URL of the Design Systems page, in the form the plugin uses when Beaver Builder is active.
+	 *
+	 * @param string $hash Hash fragment.
+	 * @return string
+	 */
+	public static function page_url( string $hash = '' ): string {
+		return admin_url( 'edit.php?post_type=fl-builder-template&page=fl-design-systems' . $hash );
+	}
+}
