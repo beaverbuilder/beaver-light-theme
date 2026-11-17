@@ -138,6 +138,11 @@
 	/* A constrained Group already sizes and places its wide and full children with core's unlayered layout margins and max-widths. */
 	.blt-prose .is-layout-constrained > :is(.alignwide, .alignfull) { inset-inline-start: auto; width: auto; }
 	.blt-prose .aligncenter { margin-inline: auto; }
+	/* Core's unlayered :where(figure) margin overrides that auto margin, so a centered Image block or captioned image centers by offset instead. */
+	.blt-prose figure:is(.wp-block-image, .wp-caption).aligncenter { inset-inline-start: 50%; margin-inline: 0; position: relative; translate: -50%; }
+	[dir="rtl"] .blt-prose figure:is(.wp-block-image, .wp-caption).aligncenter { translate: 50%; }
+	/* Core's unlayered layout styles already center a flow or constrained container's centered child with important margins, and a flex or grid item has a slot, not the column, to center in. */
+	.blt-prose :is(.is-layout-flow, .is-layout-constrained, .is-layout-flex, .is-layout-grid) > figure:is(.wp-block-image, .wp-caption).aligncenter { inset-inline-start: auto; translate: none; }
 
 	/* Floats and captions: a float caps at half the column for narrow screens, and a block clearfix contains floats yet lets the last margin collapse. */
 	.blt-prose::after { clear: both; content: ""; display: block; }
