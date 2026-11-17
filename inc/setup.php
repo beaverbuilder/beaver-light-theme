@@ -11,7 +11,8 @@ defined( 'ABSPATH' ) || exit;
  * Register theme supports and nav menu locations.
  *
  * The `header` and `footer` location slugs match bb-theme's so menus stay
- * assigned when a site switches over.
+ * assigned when a site switches over. The header label names its two-level
+ * limit, since `parts/header.php` renders `depth => 2` and drops deeper items.
  *
  * @since 0.1.0
  * @return void
@@ -43,7 +44,7 @@ function beaver_light_setup(): void {
 
 	register_nav_menus(
 		array(
-			'header' => __( 'Header Menu', 'beaver-light' ),
+			'header' => __( 'Header Menu (two levels)', 'beaver-light' ),
 			'footer' => __( 'Footer Menu', 'beaver-light' ),
 		)
 	);
