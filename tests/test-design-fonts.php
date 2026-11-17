@@ -108,6 +108,14 @@ class Test_Design_Fonts extends Beaver_Light_Test_Case {
 	}
 
 	/**
+	 * A long near-match fails cleanly rather than exhausting the backtrack limit, which would also read as no match.
+	 */
+	public function test_family_check_does_not_backtrack() {
+		$this->assertSame( 0, preg_match( Beaver_Light_Design_Fonts::FAMILY, str_repeat( 'a  ,', 120 ) . '!' ) );
+		$this->assertSame( PREG_NO_ERROR, preg_last_error() );
+	}
+
+	/**
 	 * Surrounding whitespace is trimmed, and a reference's fallback is used when its target is missing.
 	 */
 	public function test_trims_and_follows_reference_fallback() {
