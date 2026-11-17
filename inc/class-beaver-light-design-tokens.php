@@ -1,6 +1,6 @@
 <?php
 /**
- * Read the site default design system's color tokens.
+ * Read the site default design system's tokens: colors, and single values such as font families.
  *
  * Uses only the design system plugin's public token read,
  * DesignSystemPostType::get_structured_data()['tokens'], on the post
@@ -75,6 +75,20 @@ final class Beaver_Light_Design_Tokens {
 		}
 
 		return $colors;
+	}
+
+	/**
+	 * One token's value, with var() references resolved.
+	 *
+	 * @since 0.1.0
+	 * @param string $name   Custom property name.
+	 * @param array  $tokens Custom property name => stored value.
+	 * @return string|null Null when the token is absent or cannot be resolved.
+	 */
+	public static function value( string $name, array $tokens ): ?string {
+		$budget = self::MAX_STEPS;
+
+		return isset( $tokens[ $name ] ) ? self::resolve( $tokens[ $name ], $tokens, array( $name ), $budget ) : null;
 	}
 
 	/**
