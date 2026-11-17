@@ -7,13 +7,13 @@ Stable tag: 0.1.0-demo
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
-A lightweight theme built for Beaver Builder. Finished out of the box, out of the way once you start styling.
+A lightweight theme built for Beaver Builder. Finished out of the box, then out of the way, with your design system winning over Global Styles.
 
 == Description ==
 
 Beaver Light (BLT) keeps a new site from looking broken before you style it: a plain, readable blog, single posts, search, archives, a 404 page and comments in system fonts on white, with no plugins required.
 
-Style the site with Beaver Builder Global Styles or a Beaver Builder AI design system, and your fonts, colors and widths flow into the blog, archives and the built-in header and footer, one value at a time.
+Style the site with Beaver Builder Global Styles or a Beaver Builder AI design system, and your fonts, colors and widths flow into the blog, archives and the built-in header and footer, one value at a time. On these theme surfaces a design system wins wherever it supplies a value, including colors the theme works out from its palette, then Global Styles, then the theme default. Global Styles still style your Beaver Builder content either way.
 
 Working with an AI agent? `AGENTS.md` in the theme folder maps the theme's CSS variables, classes and hooks, so an agent can restyle it with a few lines of Additional CSS or build a child theme.
 
