@@ -28,6 +28,10 @@ Working with an AI agent? `AGENTS.md` in the theme folder maps the theme's CSS v
 
 Use Beaver Builder Global Styles or a Beaver Builder AI design system. Without Beaver Builder, set the theme's CSS variables (for example `--blt-primary`) on `:root` in Appearance → Customize → Additional CSS.
 
+= Why does the header change on a page with its own design system? =
+
+Beaver Builder loads one design system per page, so the theme's header and footer follow the design system of the page being viewed. This is intended: otherwise the page would be half one design system and half the other. For a different header or footer on such a page, use a Beaver Themer header or footer, or the No Header/Footer page template.
+
 = Can I remove the header and footer? =
 
 Use the No Header/Footer page template, or `add_filter( 'beaver_light_header_footer', '__return_false' );` site-wide.
