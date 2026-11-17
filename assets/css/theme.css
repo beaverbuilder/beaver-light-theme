@@ -223,7 +223,10 @@
 	.blt-entry__tags { color: var(--blt-muted); font-size: 0.875rem; }
 	.blt-entry:not(.type-post) .blt-entry__footer { border: 0; margin: 0; padding: 0; }
 
-	.post-navigation .nav-links, .pagination .nav-links { display: flex; flex-wrap: wrap; gap: 1rem; justify-content: space-between; }
+	.post-navigation .nav-links, .pagination .nav-links { display: flex; flex-wrap: wrap; gap: 1rem; }
+	.post-navigation .nav-links { justify-content: space-between; }
+	/* Page numbers read as one group, unlike the previous and next post links, which sit at either side. */
+	.pagination .nav-links { justify-content: center; }
 	.blt-post-nav__label { color: var(--blt-muted); display: block; font-size: 0.75rem; letter-spacing: 0.06em; text-transform: uppercase; }
 	.pagination { margin-top: 2rem; }
 	.pagination .page-numbers.current { font-weight: 700; }
