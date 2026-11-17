@@ -81,20 +81,37 @@ final class Beaver_Light_Styles {
 	}
 
 	/**
+	 * The value each role falls back to under its tokens: the design system's resolved font family, then Global Styles, then the theme default.
+	 *
+	 * @since 0.1.0
+	 * @return array Role => CSS value.
+	 */
+	public static function fallbacks(): array {
+		$defaults = array_map(
+			function ( array $def ): string {
+				return $def[1];
+			},
+			self::roles()
+		);
+
+		return array_merge( $defaults, Beaver_Light_Global_Styles::values(), Beaver_Light_Design_Fonts::values() );
+	}
+
+	/**
 	 * The :root block that resolves every role through the chain, without rejected names and with any inferred color token after the listed names.
 	 *
 	 * @since 0.1.0
 	 * @return string
 	 */
 	public static function bridge_css(): string {
-		$global_styles = Beaver_Light_Global_Styles::values();
-		$inferred      = Beaver_Light_Color_Inference::roles();
-		$rejected      = Beaver_Light_Color_Inference::rejected();
-		$widths        = self::widths();
-		$lines         = array();
+		$fallbacks = self::fallbacks();
+		$inferred  = Beaver_Light_Color_Inference::roles();
+		$rejected  = Beaver_Light_Color_Inference::rejected();
+		$widths    = self::widths();
+		$lines     = array();
 
 		foreach ( self::roles() as $role => $def ) {
-			$fallback = $global_styles[ $role ] ?? $def[1];
+			$fallback = $fallbacks[ $role ];
 			$skip     = 'muted' === $role ? array_filter( $rejected, 'is_string' ) : array();
 			$tokens   = array_values( array_diff( $def[0], $skip ) );
 
