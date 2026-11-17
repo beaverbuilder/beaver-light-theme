@@ -12,7 +12,7 @@
 
 defined( 'ABSPATH' ) || exit;
 
-define( 'BEAVER_LIGHT_VERSION', '0.1.0-demo' );
+define( 'BEAVER_LIGHT_VERSION', '0.2.0-demo' );
 define( 'BEAVER_LIGHT_DIR', get_template_directory() );
 define( 'BEAVER_LIGHT_URI', get_template_directory_uri() );
 
