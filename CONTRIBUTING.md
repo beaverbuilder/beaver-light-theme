@@ -4,7 +4,7 @@ Beaver Light is an ultra-minimal theme for Beaver Builder, distributed on WordPr
 
 ## Principles
 
-- **No settings.** No Customizer panels, no admin pages, no theme options. The logo, site title, menus, Site Icon and Additional CSS come from WordPress core. Styling comes from Beaver Builder Global Styles or a design system.
+- **No settings.** No Customizer settings, no admin pages, no theme options. The one Customizer section, Colors and Fonts, only links to the design system and Global Styles. The logo, site title, menus, Site Icon and Additional CSS come from WordPress core. Styling comes from Beaver Builder Global Styles or a design system.
 - **One plain look.** White, system fonts, links in the body color with an underline, near-black buttons, neutral grays. The defaults exist only to keep an unstyled site from looking broken, so there is no second look to switch to and nothing for a user to undo.
 - **Each style value resolves on its own:** design system token (a known name, except a muted one below text contrast on the surface, else, for any color role without one, including on a system that uses known names elsewhere, a color token picked by value with passing contrast; see `Beaver_Light_Color_Inference`), then Global Styles, then the theme default. Every `--blt-*` property is printed by PHP (`Beaver_Light_Styles::bridge_css()`) on the front end and in the block editor.
 - **The theme styles what the theme renders.** The header, footer, archives, native posts and pages. Never anything inside `.fl-builder-content`, with one exception: text fields and textareas, which browsers leave unstyled and Beaver Builder modules do not style themselves.
