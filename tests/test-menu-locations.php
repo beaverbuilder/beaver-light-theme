@@ -18,4 +18,13 @@ class Test_Menu_Locations extends WP_UnitTestCase {
 
 		$this->assertEqualsCanonicalizing( array( 'header', 'footer' ), $locations );
 	}
+
+	/**
+	 * The header label tells site owners in Appearance > Menus that only two levels render.
+	 */
+	public function test_header_label_names_the_two_level_limit() {
+		$locations = get_registered_nav_menus();
+
+		$this->assertSame( 'Header Menu (two levels)', $locations['header'] );
+	}
 }
