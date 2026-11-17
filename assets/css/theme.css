@@ -76,8 +76,10 @@
 		letter-spacing: -0.01em;
 		line-height: 1.2;
 		margin: 1.6em 0 0.5em;
-		text-wrap: balance;
 	}
+
+	/* Builder modules set no text-wrap of their own, so the balance stops at builder layouts placed in theme hooks. */
+	:where(.blt-prose, .blt-archive, .blt-entry, .blt-404, .blt-comments) :is(h1, h2, h3, h4, h5, h6):not(.fl-builder-content *) { text-wrap: balance; }
 
 	.blt-entry__title, .blt-archive-title {
 		font-size: clamp(2rem, 1.4rem + 2.4vw, 3rem);
