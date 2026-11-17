@@ -63,6 +63,19 @@
 		.blt-menu > li { position: relative; }
 		.blt-menu a { display: block; padding-block: 0.5rem; }
 
+		/* A small chevron marks a parent item, whose submenu otherwise appears only on hover or focus; inline-block keeps the link's hover underline off it. */
+		.blt-menu > .menu-item-has-children > a::after {
+			border-bottom: 1.5px solid currentColor;
+			border-right: 1.5px solid currentColor;
+			content: "";
+			display: inline-block;
+			height: 0.4em;
+			margin-inline-start: 0.5em;
+			transform: translateY(-0.2em) rotate(45deg);
+			vertical-align: middle;
+			width: 0.4em;
+		}
+
 		.blt-menu .sub-menu {
 			background: var(--blt-surface);
 			border: 1px solid var(--blt-line);
