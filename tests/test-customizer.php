@@ -33,9 +33,24 @@ class Test_Customizer extends Beaver_Light_Test_Case {
 	}
 
 	/**
-	 * With the design system and Global Styles installed, both are linked: the design system to its admin page, Global Styles to its documentation.
+	 * Without Beaver Builder Pro's Global Styles, as on Lite, whose stand-in Global Styles class is loaded here, only the design system is linked.
 	 */
-	public function test_links_what_is_installed() {
+	public function test_no_global_styles_link_without_pro() {
+		$urls = wp_list_pluck( Beaver_Light_Customizer::links(), 'url' );
+
+		$this->assertTrue( class_exists( 'FLBuilderGlobalStyles' ) );
+		$this->assertSame( array( admin_url( 'edit.php?post_type=fl-builder-template&page=fl-design-systems' ) ), $urls );
+	}
+
+	/**
+	 * With Pro's Global Styles loaded, it is linked to its documentation after the design system's admin page.
+	 *
+	 * @runInSeparateProcess
+	 * @preserveGlobalState disabled
+	 */
+	public function test_links_global_styles_with_pro() {
+		define( 'FL_BUILDER_GLOBAL_STYLES_DIR', __DIR__ . '/' );
+
 		$urls = wp_list_pluck( Beaver_Light_Customizer::links(), 'url' );
 
 		$this->assertSame(
@@ -62,14 +77,24 @@ class Test_Customizer extends Beaver_Light_Test_Case {
 	}
 
 	/**
+	 * A user who cannot edit theme options does not get the control.
+	 */
+	public function test_control_needs_theme_options() {
+		$control = $this->customizer()->get_control( Beaver_Light_Customizer::SECTION );
+
+		wp_set_current_user( self::factory()->user->create( array( 'role' => 'editor' ) ) );
+
+		$this->assertFalse( $control->check_capabilities() );
+	}
+
+	/**
 	 * The control prints each link, escaped, and no form input.
 	 */
 	public function test_control_prints_links() {
 		$control = $this->customizer()->get_control( Beaver_Light_Customizer::SECTION );
 		$html    = $control->get_content();
 
-		$this->assertStringContainsString( 'href="' . esc_url( Beaver_Light_Customizer::GLOBAL_STYLES_DOCS ) . '"', $html );
-		$this->assertStringContainsString( 'page=fl-design-systems', $html );
+		$this->assertStringContainsString( 'href="' . esc_url( Beaver_Light_Customizer::links()[0]['url'] ) . '"', $html );
 		$this->assertStringNotContainsString( '<input', $html );
 	}
 }

@@ -90,7 +90,7 @@ final class Beaver_Light_Customizer {
 		if ( self::has_design_system_page() ) {
 			$links[] = array(
 				'label' => __( 'Design Systems', 'beaver-light' ),
-				'url'   => (string) call_user_func( array( self::DESIGN_SYSTEM_PAGE, 'page_url' ) ),
+				'url'   => call_user_func( array( self::DESIGN_SYSTEM_PAGE, 'page_url' ) ),
 				'where' => __( 'Colors, fonts and spacing for the whole site.', 'beaver-light' ),
 			);
 		}

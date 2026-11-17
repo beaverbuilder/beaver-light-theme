@@ -8,9 +8,6 @@
  * @package Beaver_Light
  */
 
-// Beaver Builder Pro defines this when it loads Global Styles; Lite does not.
-define( 'FL_BUILDER_GLOBAL_STYLES_DIR', __DIR__ . '/' );
-
 /**
  * Builder model stand-in.
  */
