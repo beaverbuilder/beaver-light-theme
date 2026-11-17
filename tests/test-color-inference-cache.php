@@ -21,7 +21,8 @@ class Test_Color_Inference_Cache extends Beaver_Light_Test_Case {
 		return array(
 			'not an array'    => array( 'garbage' ),
 			'no key'          => array( array( 'roles' => array() ) ),
-			'roles not array' => array( array( 'key' => null, 'roles' => 'x' ) ),
+			'roles not array' => array( array( 'key' => null, 'roles' => 'x', 'rejected' => array() ) ),
+			'no rejected'     => array( array( 'key' => null, 'roles' => array() ) ),
 		);
 	}
 
@@ -56,13 +57,14 @@ class Test_Color_Inference_Cache extends Beaver_Light_Test_Case {
 		$this->assertSame( 'color-canvas', $first['surface'] );
 
 		DesignSystemPostType::$tokens = self::fixture( 'agent-references' );
-		self::clear_request_cache( 'Beaver_Light_Color_Inference', 'roles' );
+		self::clear_request_cache( 'Beaver_Light_Color_Inference', 'result' );
 		$this->assertSame( $first, Beaver_Light_Color_Inference::roles() );
 
 		$post->post_modified_gmt = '2030-01-01 00:00:00';
-		self::clear_request_cache( 'Beaver_Light_Color_Inference', 'roles' );
+		self::clear_request_cache( 'Beaver_Light_Color_Inference', 'result' );
 		$this->assertSame( 'color-gray-0', Beaver_Light_Color_Inference::roles()['surface'] );
 		$this->assertSame( Beaver_Light_Color_Inference::roles(), get_option( 'beaver_light_color_roles' )['roles'] );
+		$this->assertSame( Beaver_Light_Color_Inference::rejected(), get_option( 'beaver_light_color_roles' )['rejected'] );
 	}
 
 	/**
@@ -70,6 +72,7 @@ class Test_Color_Inference_Cache extends Beaver_Light_Test_Case {
 	 */
 	public function test_no_default_writes_nothing() {
 		$this->assertSame( array(), Beaver_Light_Color_Inference::roles() );
+		$this->assertSame( array(), Beaver_Light_Color_Inference::rejected() );
 		$this->assertFalse( get_option( 'beaver_light_color_roles' ) );
 	}
 }
